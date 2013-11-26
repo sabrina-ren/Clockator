@@ -19,6 +19,9 @@
 {
     [super viewDidLoad];
 
+//    PFObject *testObject = [PFObject objectWithClassName:@"TestObject"];
+//    [testObject setObject:@"bar" forKey:@"foo"];
+//    [testObject save];
     
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 10, 40)];
     [titleLabel setFont:[UIFont fontWithName:@"ChannelSlanted1" size:20]];

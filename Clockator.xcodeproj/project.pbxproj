@@ -16,12 +16,10 @@
 		2983121F1840480A00F62170 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2983121D1840480A00F62170 /* Main.storyboard */; };
 		298312221840480A00F62170 /* ClockViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 298312211840480A00F62170 /* ClockViewController.m */; };
 		298312241840480A00F62170 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 298312231840480A00F62170 /* Images.xcassets */; };
-		2983122B1840480A00F62170 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983122A1840480A00F62170 /* XCTest.framework */; };
 		2983122C1840480A00F62170 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983120B1840480A00F62170 /* Foundation.framework */; };
 		2983122D1840480A00F62170 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983120F1840480A00F62170 /* UIKit.framework */; };
 		298312351840480A00F62170 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 298312331840480A00F62170 /* InfoPlist.strings */; };
 		298312371840480A00F62170 /* ClockatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 298312361840480A00F62170 /* ClockatorTests.m */; };
-		2983124418404CFC00F62170 /* NavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2983124318404CFC00F62170 /* NavigationController.m */; };
 		2983124A18404F5200F62170 /* Channel_Slanted1.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2983124918404F5200F62170 /* Channel_Slanted1.ttf */; };
 		2983124B18404F8800F62170 /* Channel_Slanted1.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2983124918404F5200F62170 /* Channel_Slanted1.ttf */; };
 		2983125018405A3B00F62170 /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 2983124F18405A3B00F62170 /* Location.m */; };
@@ -30,6 +28,20 @@
 		2983125B1840667F00F62170 /* Friend.m in Sources */ = {isa = PBXBuildFile; fileRef = 2983125A1840667F00F62170 /* Friend.m */; };
 		2983125E1840820000F62170 /* circle.png in Resources */ = {isa = PBXBuildFile; fileRef = 2983125C1840820000F62170 /* circle.png */; };
 		2983125F1840820000F62170 /* hand.png in Resources */ = {isa = PBXBuildFile; fileRef = 2983125D1840820000F62170 /* hand.png */; };
+		298312611843210900F62170 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 298312601843210900F62170 /* Parse.framework */; };
+		298312631843215600F62170 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 298312621843215600F62170 /* AudioToolbox.framework */; };
+		298312651843215B00F62170 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 298312641843215B00F62170 /* CFNetwork.framework */; };
+		298312671843216700F62170 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 298312661843216700F62170 /* CoreLocation.framework */; };
+		298312691843216E00F62170 /* libz.1.1.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 298312681843216E00F62170 /* libz.1.1.3.dylib */; };
+		2983126B1843217400F62170 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983126A1843217400F62170 /* MobileCoreServices.framework */; };
+		2983126D1843217A00F62170 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983126C1843217A00F62170 /* QuartzCore.framework */; };
+		2983126F1843217F00F62170 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983126E1843217F00F62170 /* Security.framework */; };
+		298312711843218400F62170 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 298312701843218400F62170 /* StoreKit.framework */; };
+		298312731843218C00F62170 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 298312721843218C00F62170 /* SystemConfiguration.framework */; };
+		29831275184439E900F62170 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29831274184439E900F62170 /* FacebookSDK.framework */; };
+		2983129918443F5F00F62170 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2983129818443F5F00F62170 /* LoginViewController.m */; };
+		2983129B184441D600F62170 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983129A184441D600F62170 /* libz.dylib */; };
+		2983129E184449D400F62170 /* UserInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2983129D184449D400F62170 /* UserInfoViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,12 +70,9 @@
 		298312211840480A00F62170 /* ClockViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClockViewController.m; sourceTree = "<group>"; };
 		298312231840480A00F62170 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		298312291840480A00F62170 /* ClockatorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClockatorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		2983122A1840480A00F62170 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		298312321840480A00F62170 /* ClockatorTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ClockatorTests-Info.plist"; sourceTree = "<group>"; };
 		298312341840480A00F62170 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		298312361840480A00F62170 /* ClockatorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClockatorTests.m; sourceTree = "<group>"; };
-		2983124218404CFC00F62170 /* NavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationController.h; sourceTree = "<group>"; };
-		2983124318404CFC00F62170 /* NavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavigationController.m; sourceTree = "<group>"; };
 		2983124918404F5200F62170 /* Channel_Slanted1.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Channel_Slanted1.ttf; path = ../Channel_Slanted1.ttf; sourceTree = "<group>"; };
 		2983124E18405A3B00F62170 /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Location.h; sourceTree = "<group>"; };
 		2983124F18405A3B00F62170 /* Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Location.m; sourceTree = "<group>"; };
@@ -71,8 +80,24 @@
 		2983125318405D7C00F62170 /* Clockator.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = Clockator.sqlite; sourceTree = SOURCE_ROOT; };
 		298312591840667F00F62170 /* Friend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Friend.h; sourceTree = "<group>"; };
 		2983125A1840667F00F62170 /* Friend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Friend.m; sourceTree = "<group>"; };
-		2983125C1840820000F62170 /* circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = circle.png; path = Clockator/Graphics/circle.png; sourceTree = "<group>"; };
-		2983125D1840820000F62170 /* hand.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = hand.png; path = Clockator/Graphics/hand.png; sourceTree = "<group>"; };
+		2983125C1840820000F62170 /* circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = circle.png; path = Graphics/circle.png; sourceTree = "<group>"; };
+		2983125D1840820000F62170 /* hand.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = hand.png; path = Graphics/hand.png; sourceTree = "<group>"; };
+		298312601843210900F62170 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
+		298312621843215600F62170 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		298312641843215B00F62170 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		298312661843216700F62170 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		298312681843216E00F62170 /* libz.1.1.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.1.3.dylib; path = usr/lib/libz.1.1.3.dylib; sourceTree = SDKROOT; };
+		2983126A1843217400F62170 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		2983126C1843217A00F62170 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		2983126E1843217F00F62170 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		298312701843218400F62170 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		298312721843218C00F62170 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		29831274184439E900F62170 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
+		2983129718443F5F00F62170 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoginViewController.h; path = ../../Clockator1/Clockator/LoginViewController.h; sourceTree = "<group>"; };
+		2983129818443F5F00F62170 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LoginViewController.m; path = ../../Clockator1/Clockator/LoginViewController.m; sourceTree = "<group>"; };
+		2983129A184441D600F62170 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		2983129C184449D400F62170 /* UserInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserInfoViewController.h; path = ../../Clockator1/Clockator/UserInfoViewController.h; sourceTree = "<group>"; };
+		2983129D184449D400F62170 /* UserInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserInfoViewController.m; path = ../../Clockator1/Clockator/UserInfoViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,10 +105,22 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2983125218405B4D00F62170 /* libsqlite3.0.dylib in Frameworks */,
+				2983129B184441D600F62170 /* libz.dylib in Frameworks */,
+				298312731843218C00F62170 /* SystemConfiguration.framework in Frameworks */,
+				298312711843218400F62170 /* StoreKit.framework in Frameworks */,
+				2983126F1843217F00F62170 /* Security.framework in Frameworks */,
+				2983126D1843217A00F62170 /* QuartzCore.framework in Frameworks */,
+				2983126B1843217400F62170 /* MobileCoreServices.framework in Frameworks */,
+				298312691843216E00F62170 /* libz.1.1.3.dylib in Frameworks */,
+				298312671843216700F62170 /* CoreLocation.framework in Frameworks */,
 				2983120E1840480A00F62170 /* CoreGraphics.framework in Frameworks */,
+				298312651843215B00F62170 /* CFNetwork.framework in Frameworks */,
+				298312631843215600F62170 /* AudioToolbox.framework in Frameworks */,
+				2983125218405B4D00F62170 /* libsqlite3.0.dylib in Frameworks */,
+				29831275184439E900F62170 /* FacebookSDK.framework in Frameworks */,
 				298312101840480A00F62170 /* UIKit.framework in Frameworks */,
 				2983120C1840480A00F62170 /* Foundation.framework in Frameworks */,
+				298312611843210900F62170 /* Parse.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,7 +128,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2983122B1840480A00F62170 /* XCTest.framework in Frameworks */,
 				2983122D1840480A00F62170 /* UIKit.framework in Frameworks */,
 				2983122C1840480A00F62170 /* Foundation.framework in Frameworks */,
 			);
@@ -103,8 +139,6 @@
 		298311FF1840480A00F62170 = {
 			isa = PBXGroup;
 			children = (
-				2983125C1840820000F62170 /* circle.png */,
-				2983125D1840820000F62170 /* hand.png */,
 				298312111840480A00F62170 /* Clockator */,
 				298312301840480A00F62170 /* ClockatorTests */,
 				2983120A1840480A00F62170 /* Frameworks */,
@@ -124,11 +158,22 @@
 		2983120A1840480A00F62170 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2983129A184441D600F62170 /* libz.dylib */,
+				29831274184439E900F62170 /* FacebookSDK.framework */,
+				298312721843218C00F62170 /* SystemConfiguration.framework */,
+				298312701843218400F62170 /* StoreKit.framework */,
+				2983126E1843217F00F62170 /* Security.framework */,
+				2983126C1843217A00F62170 /* QuartzCore.framework */,
+				2983126A1843217400F62170 /* MobileCoreServices.framework */,
+				298312681843216E00F62170 /* libz.1.1.3.dylib */,
+				298312661843216700F62170 /* CoreLocation.framework */,
+				298312641843215B00F62170 /* CFNetwork.framework */,
+				298312621843215600F62170 /* AudioToolbox.framework */,
+				298312601843210900F62170 /* Parse.framework */,
 				2983125118405B4D00F62170 /* libsqlite3.0.dylib */,
 				2983120B1840480A00F62170 /* Foundation.framework */,
 				2983120D1840480A00F62170 /* CoreGraphics.framework */,
 				2983120F1840480A00F62170 /* UIKit.framework */,
-				2983122A1840480A00F62170 /* XCTest.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -137,18 +182,11 @@
 			isa = PBXGroup;
 			children = (
 				2983121D1840480A00F62170 /* Main.storyboard */,
-				2983125318405D7C00F62170 /* Clockator.sqlite */,
-				2983124918404F5200F62170 /* Channel_Slanted1.ttf */,
 				2983121A1840480A00F62170 /* AppDelegate.h */,
 				2983121B1840480A00F62170 /* AppDelegate.m */,
-				2983124218404CFC00F62170 /* NavigationController.h */,
-				2983124318404CFC00F62170 /* NavigationController.m */,
-				298312201840480A00F62170 /* ClockViewController.h */,
-				298312211840480A00F62170 /* ClockViewController.m */,
-				298312591840667F00F62170 /* Friend.h */,
-				2983125A1840667F00F62170 /* Friend.m */,
-				2983124E18405A3B00F62170 /* Location.h */,
-				2983124F18405A3B00F62170 /* Location.m */,
+				2983129F184449E800F62170 /* Controllers */,
+				298312A118444A1200F62170 /* Models */,
+				298312A0184449FD00F62170 /* Assets */,
 				298312231840480A00F62170 /* Images.xcassets */,
 				298312121840480A00F62170 /* Supporting Files */,
 			);
@@ -182,6 +220,41 @@
 				298312331840480A00F62170 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		2983129F184449E800F62170 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				2983129718443F5F00F62170 /* LoginViewController.h */,
+				2983129818443F5F00F62170 /* LoginViewController.m */,
+				2983129C184449D400F62170 /* UserInfoViewController.h */,
+				2983129D184449D400F62170 /* UserInfoViewController.m */,
+				298312201840480A00F62170 /* ClockViewController.h */,
+				298312211840480A00F62170 /* ClockViewController.m */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		298312A0184449FD00F62170 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				2983124918404F5200F62170 /* Channel_Slanted1.ttf */,
+				2983125318405D7C00F62170 /* Clockator.sqlite */,
+				2983125C1840820000F62170 /* circle.png */,
+				2983125D1840820000F62170 /* hand.png */,
+			);
+			name = Assets;
+			sourceTree = "<group>";
+		};
+		298312A118444A1200F62170 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				298312591840667F00F62170 /* Friend.h */,
+				2983125A1840667F00F62170 /* Friend.m */,
+				2983124E18405A3B00F62170 /* Location.h */,
+				2983124F18405A3B00F62170 /* Location.m */,
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -290,7 +363,8 @@
 				2983125018405A3B00F62170 /* Location.m in Sources */,
 				2983121C1840480A00F62170 /* AppDelegate.m in Sources */,
 				2983125B1840667F00F62170 /* Friend.m in Sources */,
-				2983124418404CFC00F62170 /* NavigationController.m in Sources */,
+				2983129918443F5F00F62170 /* LoginViewController.m in Sources */,
+				2983129E184449D400F62170 /* UserInfoViewController.m in Sources */,
 				298312181840480A00F62170 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -418,6 +492,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/sabrinaren/Desktop/Clockator,
+					/Users/sabrinaren/Documents/FacebookSDK,
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Clockator/Clockator-Prefix.pch";
 				INFOPLIST_FILE = "Clockator/Clockator-Info.plist";
@@ -431,6 +510,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/sabrinaren/Desktop/Clockator,
+					/Users/sabrinaren/Documents/FacebookSDK,
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Clockator/Clockator-Prefix.pch";
 				INFOPLIST_FILE = "Clockator/Clockator-Info.plist";
