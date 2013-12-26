@@ -13,13 +13,11 @@
 #import "Friend.h"
 #import "AppDelegate.h"
 
-@interface ClockViewController : UIViewController
+@interface ClockViewController : UIViewController <CLLocationManagerDelegate>
 
 @property (nonatomic, copy) NSMutableArray *locations;
 @property (nonatomic, copy) NSMutableArray *friends;
 @property (nonatomic, copy) NSMutableArray *friendsAtLocation;
 @property (nonatomic, retain) NSMutableArray *hands;
-
-@property (weak, nonatomic) IBOutlet UIImageView *hand;
 
 @end
