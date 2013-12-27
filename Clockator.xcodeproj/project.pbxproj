@@ -20,6 +20,7 @@
 		2917E965186AEA8F00A46AD7 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2917E964186AEA8F00A46AD7 /* MapKit.framework */; };
 		293FD5D4186B93C000F2CB61 /* geofencedPlace.m in Sources */ = {isa = PBXBuildFile; fileRef = 293FD5D3186B93C000F2CB61 /* geofencedPlace.m */; };
 		293FD5D6186B97C300F2CB61 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 293FD5D5186B97C300F2CB61 /* AddressBookUI.framework */; };
+		293FD5DF186D585300F2CB61 /* AppKeys.m in Sources */ = {isa = PBXBuildFile; fileRef = 293FD5DE186D585300F2CB61 /* AppKeys.m */; };
 		2983120C1840480A00F62170 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983120B1840480A00F62170 /* Foundation.framework */; };
 		2983120E1840480A00F62170 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983120D1840480A00F62170 /* CoreGraphics.framework */; };
 		298312101840480A00F62170 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983120F1840480A00F62170 /* UIKit.framework */; };
@@ -88,6 +89,8 @@
 		293FD5D2186B93C000F2CB61 /* geofencedPlace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = geofencedPlace.h; sourceTree = "<group>"; };
 		293FD5D3186B93C000F2CB61 /* geofencedPlace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = geofencedPlace.m; sourceTree = "<group>"; };
 		293FD5D5186B97C300F2CB61 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
+		293FD5DD186D584500F2CB61 /* AppKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKeys.h; sourceTree = "<group>"; };
+		293FD5DE186D585300F2CB61 /* AppKeys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppKeys.m; sourceTree = SOURCE_ROOT; };
 		298312081840480A00F62170 /* Clockator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clockator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2983120B1840480A00F62170 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2983120D1840480A00F62170 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -225,6 +228,8 @@
 				2983121D1840480A00F62170 /* Main.storyboard */,
 				2983121A1840480A00F62170 /* AppDelegate.h */,
 				2983121B1840480A00F62170 /* AppDelegate.m */,
+				293FD5DD186D584500F2CB61 /* AppKeys.h */,
+				293FD5DE186D585300F2CB61 /* AppKeys.m */,
 				2983129F184449E800F62170 /* Controllers */,
 				298312A118444A1200F62170 /* Models */,
 				298312A0184449FD00F62170 /* Assets */,
@@ -434,6 +439,7 @@
 				2983125B1840667F00F62170 /* Friend.m in Sources */,
 				2983129918443F5F00F62170 /* LoginViewController.m in Sources */,
 				2917E8F61868052900A46AD7 /* SettingsViewController.m in Sources */,
+				293FD5DF186D585300F2CB61 /* AppKeys.m in Sources */,
 				2983129E184449D400F62170 /* UserInfoViewController.m in Sources */,
 				298312181840480A00F62170 /* main.m in Sources */,
 			);
