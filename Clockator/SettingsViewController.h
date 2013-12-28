@@ -17,5 +17,6 @@
 
 @property (nonatomic) NSMutableArray *clockPlaces;
 @property (nonatomic) NSMutableArray *myGeofences;
+@property (nonatomic) CLLocation *currentLocation;
 
 @end

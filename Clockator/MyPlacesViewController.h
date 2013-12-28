@@ -18,12 +18,19 @@
 - (void)myPlacesViewController:(MyPlacesViewController *)controller didUpdateGeofence:(geofencedPlace *)geofence isNew:(BOOL)isNew;
 @end
 
-@interface MyPlacesViewController : UIViewController <UITextFieldDelegate, MKMapViewDelegate, UIAlertViewDelegate>
+@interface MyPlacesViewController : UIViewController <UISearchBarDelegate, UITableViewDelegate, UITextFieldDelegate, MKMapViewDelegate, UIAlertViewDelegate>
 
-@property (strong, nonatomic) IBOutlet UITextField *addressField;
+@property (nonatomic) CLLocation *currentLocation;
+
+@property (weak, nonatomic) IBOutlet UISearchBar *placesSearchBar;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+@property (weak, nonatomic) IBOutlet UITableView *resultsTableView;
 @property (strong, nonatomic) IBOutlet UITextField *nameField;
+@property (weak, nonatomic) IBOutlet UIButton *iconButton;
 @property (weak, nonatomic) IBOutlet UISlider *slider;
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
+
+- (IBAction)chooseIcon:(id)sender;
 - (IBAction)sliderChanged:(id)sender;
 
 @property (nonatomic) geofencedPlace *geoPlace;

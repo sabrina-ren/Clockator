@@ -21,6 +21,8 @@
 		293FD5D4186B93C000F2CB61 /* geofencedPlace.m in Sources */ = {isa = PBXBuildFile; fileRef = 293FD5D3186B93C000F2CB61 /* geofencedPlace.m */; };
 		293FD5D6186B97C300F2CB61 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 293FD5D5186B97C300F2CB61 /* AddressBookUI.framework */; };
 		293FD5DF186D585300F2CB61 /* AppKeys.m in Sources */ = {isa = PBXBuildFile; fileRef = 293FD5DE186D585300F2CB61 /* AppKeys.m */; };
+		293FD5E2186E442400F2CB61 /* IconViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 293FD5E1186E442400F2CB61 /* IconViewController.m */; };
+		293FD5E4186EB2E900F2CB61 /* CurrentLocation.png in Resources */ = {isa = PBXBuildFile; fileRef = 293FD5E3186EB2E900F2CB61 /* CurrentLocation.png */; };
 		2983120C1840480A00F62170 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983120B1840480A00F62170 /* Foundation.framework */; };
 		2983120E1840480A00F62170 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983120D1840480A00F62170 /* CoreGraphics.framework */; };
 		298312101840480A00F62170 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983120F1840480A00F62170 /* UIKit.framework */; };
@@ -91,6 +93,9 @@
 		293FD5D5186B97C300F2CB61 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		293FD5DD186D584500F2CB61 /* AppKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKeys.h; sourceTree = "<group>"; };
 		293FD5DE186D585300F2CB61 /* AppKeys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppKeys.m; sourceTree = SOURCE_ROOT; };
+		293FD5E0186E442400F2CB61 /* IconViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconViewController.h; sourceTree = "<group>"; };
+		293FD5E1186E442400F2CB61 /* IconViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IconViewController.m; sourceTree = "<group>"; };
+		293FD5E3186EB2E900F2CB61 /* CurrentLocation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = CurrentLocation.png; path = Graphics/CurrentLocation.png; sourceTree = "<group>"; };
 		298312081840480A00F62170 /* Clockator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clockator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2983120B1840480A00F62170 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2983120D1840480A00F62170 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -285,6 +290,8 @@
 				2917E95D18697D7600A46AD7 /* ClockFaceSettingsController.m */,
 				2917E94C1869291E00A46AD7 /* MyPlacesViewController.h */,
 				2917E94D1869291E00A46AD7 /* MyPlacesViewController.m */,
+				293FD5E0186E442400F2CB61 /* IconViewController.h */,
+				293FD5E1186E442400F2CB61 /* IconViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -292,6 +299,7 @@
 		298312A0184449FD00F62170 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				293FD5E3186EB2E900F2CB61 /* CurrentLocation.png */,
 				2917E95218696E1700A46AD7 /* Bar.png */,
 				2917E95318696E1700A46AD7 /* Home.png */,
 				2917E95418696E1700A46AD7 /* Other.png */,
@@ -397,6 +405,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2917E95A18696E1700A46AD7 /* School.png in Resources */,
+				293FD5E4186EB2E900F2CB61 /* CurrentLocation.png in Resources */,
 				2917E95818696E1700A46AD7 /* Home.png in Resources */,
 				2983124A18404F5200F62170 /* Channel_Slanted1.ttf in Resources */,
 				298312241840480A00F62170 /* Images.xcassets in Resources */,
@@ -434,6 +443,7 @@
 				2917E9511869689100A46AD7 /* Place.m in Sources */,
 				2917E94E1869291E00A46AD7 /* MyPlacesViewController.m in Sources */,
 				2983125018405A3B00F62170 /* Location.m in Sources */,
+				293FD5E2186E442400F2CB61 /* IconViewController.m in Sources */,
 				2983121C1840480A00F62170 /* AppDelegate.m in Sources */,
 				2917E961186A2F2000A46AD7 /* UIColor+customColours.m in Sources */,
 				2983125B1840667F00F62170 /* Friend.m in Sources */,

@@ -133,6 +133,7 @@
     } else {
         self.selectedRow = indexPath.row;
          MyPlacesViewController *myPlacesController = [self.storyboard instantiateViewControllerWithIdentifier:@"MyPlacesViewController"];
+        myPlacesController.currentLocation = self.currentLocation;
         if (myGeofences.count == indexPath.row) myPlacesController.geoPlace = nil;
         else myPlacesController.geoPlace = myGeofences[indexPath.row];
         

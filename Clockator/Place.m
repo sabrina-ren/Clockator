@@ -13,7 +13,7 @@
 @synthesize placeName, placeIcon, isShown, placeAddress;
 
 + (NSMutableArray *)getDefaultPlaces {
-    NSArray *names = @[@"Other", @"Bar", @"Home", @"School", @"Work"];
+    NSArray *names = @[@"Bar", @"Home", @"Other", @"School", @"Work"];
     
     NSMutableArray *defaultPlaces = [[NSMutableArray alloc] init];
     
