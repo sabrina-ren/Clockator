@@ -1,31 +1,42 @@
 //
-//  MyPlacesViewController.m
+//  GeofenceViewController.m
 //  Clockator
 //
 //  Created by Sabrina Ren on 12/23/2013.
 //  Copyright (c) 2013 Sabrina Ren. All rights reserved.
 //
-
-#import "MyPlacesViewController.h"
-#import "IconViewController.h"
+#import "GeofenceViewController.h"
+#import "PlaceIconViewController.h"
+#import "GeofencePlace.h"
 #import "Place.h"
 #import "UIColor+customColours.h"
-#import <AddressBookUI/AddressBookUI.h>
+#import <CoreLocation/CoreLocation.h>
 
-@interface MyPlacesViewController ()
+@interface GeofenceViewController ()
+@property (weak, nonatomic) IBOutlet MKMapView *mapView;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+@property (weak, nonatomic) IBOutlet UIButton *iconButton;
+@property (weak, nonatomic) IBOutlet UISearchBar *placesSearchBar;
+@property (weak, nonatomic) IBOutlet UISlider *slider;
+@property (weak, nonatomic) IBOutlet UITableView *resultsTableView;
+@property (nonatomic) IBOutlet UITextField *nameField;
 
-@property (nonatomic) MKLocalSearchResponse *searchResults;
+- (IBAction)chooseIcon:(id)sender;
+- (IBAction)sliderChanged:(id)sender;
+
 @property (nonatomic) CLPlacemark *placemark;
+@property (nonatomic) MKLocalSearchResponse *searchResults;
 @property CLLocationCoordinate2D coords;
-@property double radius;
-@property BOOL placeChanged;
 @property NSInteger displayCurrent;
-
+@property NSInteger iconIndex;
+@property BOOL placeChanged;
+@property double radius;
 @end
 
-@implementation MyPlacesViewController
-@synthesize geoPlace, radius, coords, placemark, searchResults;
-@synthesize nameField, mapView, iconButton, placesSearchBar, resultsTableView;
+@implementation GeofenceViewController
+@synthesize clockPlaces, currentLocation, geoPlace;
+@synthesize mapView, iconButton, placesSearchBar, resultsTableView, nameField;
+@synthesize placemark, searchResults, coords;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -55,14 +66,17 @@
         nameField.text = geoPlace.fenceName;
         placesSearchBar.text = geoPlace.fenceAddress;
         placemark = geoPlace.fencePlacemark;
-        radius = geoPlace.fenceRegion.radius;
+        self.radius = geoPlace.fenceRegion.radius;
+        self.iconIndex = geoPlace.iconIndex;
         [self showMap];
     } else {
         titleLabel.text = @"New Place";
-        radius = 100;
+        self.radius = 100;
+        self.iconIndex = 1;
     }
+    [iconButton setImage:[clockPlaces[self.iconIndex] placeIcon] forState:UIControlStateNormal];
     self.navigationItem.titleView = titleLabel;
-    [self.slider setValue:radius animated:YES];
+    [self.slider setValue:self.radius animated:YES];
 
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -72,24 +86,70 @@
     self.activityIndicator.hidesWhenStopped = YES;
 }
 
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
 - (void)viewDidAppear:(BOOL)animated {
-    [placesSearchBar becomeFirstResponder];
+    NSLog(@"View appeared");
+}
+
+#pragma mark - UI Behaviour
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self.view endEditing:YES];
+    [placesSearchBar resignFirstResponder];
+    
+    resultsTableView.hidden = YES;
+    
+    [super touchesBegan:touches withEvent:event];
+}
+
+- (IBAction)chooseIcon:(id)sender {
+    PlaceIconViewController *iconController = (PlaceIconViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"PlaceIconViewController"];
+    iconController.delegate = self;
+    iconController.clockPlaces = self.clockPlaces;
+    iconController.isIconView = YES;
+    iconController.currentIconIndex = self.iconIndex;
+    [self.navigationController pushViewController:iconController animated:YES];
+}
+
+- (IBAction)sliderChanged:(id)sender {
+    UISlider *slider = (UISlider *)sender;
+    double value = slider.value;
+    self.radius = value;
+    [self showCircle];
+}
+
+- (void)showAlertWithTitle:(NSString *)title fieldTag:(NSInteger)tag {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+    alert.tag = tag;
+    [alert show];
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if (alertView.tag == 0) [placesSearchBar becomeFirstResponder];
+    else [nameField becomeFirstResponder];
 }
 
 - (void)doneButtonActionHandler:(id)sender {
-
-    CLCircularRegion *region = [[CLCircularRegion alloc] initWithCenter:coords radius:radius identifier:nameField.text];
+    
+    CLCircularRegion *region = [[CLCircularRegion alloc] initWithCenter:coords radius:self.radius identifier:nameField.text];
     if (placemark) {
         BOOL isNew = TRUE;
         if (geoPlace) isNew = NO;
-        else geoPlace = [[geofencedPlace alloc] init];
+        else geoPlace = [[GeofencePlace alloc] init];
         
         geoPlace.fenceRegion = region;
         geoPlace.fencePlacemark = placemark;
+        geoPlace.iconIndex = self.iconIndex;
         
         if (nameField.text.length > 0) {
             geoPlace.fenceName = nameField.text;
-            [self.delegate myPlacesViewController:self didUpdateGeofence:geoPlace isNew:isNew];
+
+            [self.delegate geofenceViewController:self didUpdateGeofence:geoPlace isNew:isNew];
             [self.navigationController popViewControllerAnimated:YES];
         }
         else [self showAlertWithTitle:@"Enter a name" fieldTag:1];
@@ -113,7 +173,11 @@
     MKLocalSearchRequest *request = [[MKLocalSearchRequest alloc] init];
     request.naturalLanguageQuery = query;
     request.region = self.mapView.region;
-    //    request.region = MKCoordinateRegionForMapRect(MKMapRectWorld);
+
+    // Search a city-sized area
+    if (mapView.region.span.latitudeDelta < 1) {
+        request.region = MKCoordinateRegionMakeWithDistance(mapView.region.center, 1, 1);
+    }
     
     MKLocalSearch *search = [[MKLocalSearch alloc] initWithRequest:request];
     
@@ -175,6 +239,7 @@
 }
 
 #pragma mark - Table view methods
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
@@ -208,7 +273,12 @@
         if (indexPath.row < searchResults.mapItems.count) {
             MKMapItem *mapItem = searchResults.mapItems[indexPath.row];
             cell.textLabel.text = mapItem.name;
-            cell.detailTextLabel.text = mapItem.placemark.addressDictionary[@"Street"];
+            
+            NSString *address = mapItem.placemark.addressDictionary[@"Street"];
+            if (address) {
+                address = [NSString stringWithFormat:@"%@, %@", address, mapItem.placemark.addressDictionary[@"City"]];
+            }
+            cell.detailTextLabel.text = address;
         }
     }
     return cell;
@@ -279,14 +349,7 @@
     return YES;
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self.view endEditing:YES];
-    [placesSearchBar resignFirstResponder];
-    
-    resultsTableView.hidden = YES;
-    
-    [super touchesBegan:touches withEvent:event];
-}
+#pragma mark - Map rendering
 
 - (void)showMap {
     [mapView removeAnnotations:mapView.annotations];
@@ -305,8 +368,8 @@
     
     MKCoordinateRegion mapRegion;
     mapRegion.center = coords;
-    mapRegion.span.latitudeDelta = radius/20000;
-    mapRegion.span.longitudeDelta = radius/20000;
+    mapRegion.span.latitudeDelta = self.radius/20000;
+    mapRegion.span.longitudeDelta = self.radius/20000;
     [mapView setRegion:mapRegion animated:YES];
 }
 
@@ -314,7 +377,7 @@
     // Removes old circle and creates new circle
     [mapView removeOverlays:mapView.overlays];
 
-    MKCircle *circle = [MKCircle circleWithCenterCoordinate:coords radius:radius];
+    MKCircle *circle = [MKCircle circleWithCenterCoordinate:coords radius:self.radius];
     [mapView addOverlay:circle];
 }
 
@@ -324,33 +387,12 @@
     return renderer;
 }
 
-- (IBAction)chooseIcon:(id)sender {
-    IconViewController *iconController = (IconViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"IconViewController"];
-    [self.navigationController pushViewController:iconController animated:YES];
-}
+#pragma mark - ClockPlacesSettingsController protocol method
 
-- (IBAction)sliderChanged:(id)sender {
-    UISlider *slider = (UISlider *)sender;
-    double value = slider.value;
-    radius = value;
-    [self showCircle];
-}
-
-- (void)showAlertWithTitle:(NSString *)title fieldTag:(NSInteger)tag {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-    alert.tag = tag;
-    [alert show];
-}
-
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    if (alertView.tag == 0) [placesSearchBar becomeFirstResponder];
-    else [nameField becomeFirstResponder];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)placeIconController:(PlaceIconViewController *)controller didChangeIconIndex:(NSInteger)index {
+    NSLog(@"Index: %i", index);
+    self.iconIndex = index;
+    [iconButton setImage:[clockPlaces[self.iconIndex] placeIcon] forState:UIControlStateNormal];
 }
 
 @end

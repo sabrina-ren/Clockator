@@ -1,5 +1,5 @@
 //
-//  ViewController.m
+//  ClockViewController.m
 //  Clockator
 //
 //  Created by Sabrina Ren on 11/22/2013.
@@ -9,26 +9,27 @@
 #import "ClockViewController.h"
 #import "FBFindFriendsController.h"
 #import "SettingsViewController.h"
+#import "GeofencePlace.h"
 #import "Place.h"
-#import "geofencedPlace.h"
 
 @interface ClockViewController ()
-
 @property (nonatomic) NSMutableArray *clockPlaces;
+@property (nonatomic) NSMutableArray *iconViews;
 @property (nonatomic) NSMutableArray *myGeofences;
-@property (nonatomic) NSMutableArray *placeViews;
+@property (nonatomic, retain) NSMutableArray *hands;
 
-@property (nonatomic) CLLocationManager *locationManager;
+@property (nonatomic) SettingsViewController *settingsController;
+
 @property (nonatomic) CLLocation *currentLocation;
-@property (nonatomic) NSMutableArray *geofences;
+@property (nonatomic) CLLocationManager *locationManager;
 @property BOOL didStartMonitoringRegion;
 @property BOOL withinGeofences;
-
 @end
 
 @implementation ClockViewController
-@synthesize locations, friends, friendsAtLocation, hands, placeViews;
-@synthesize clockPlaces, myGeofences, locationManager, currentLocation;
+@synthesize clockPlaces, iconViews, myGeofences, hands;
+@synthesize settingsController;
+@synthesize currentLocation, locationManager;
 
 - (void)viewDidLoad
 {
@@ -42,53 +43,56 @@
     self.navigationItem.titleView = titleLabel;
     
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithTitle:@"Add" style:UIBarButtonSystemItemAdd target:self action:@selector(addFriendsTouchHandler:)];
+    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithTitle:@"Add" style:UIBarButtonItemStylePlain target:self action:@selector(addFriendsTouchHandler:)];
     self.navigationItem.rightBarButtonItem = addButton;
     
     // Get default clock places
     clockPlaces = [Place getDefaultPlaces];
 
-    AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-
-    
-    // Temp hardcoded data for demo
-    friends = appDelegate.friends;
-    locations = appDelegate.locations;
-    friendsAtLocation = appDelegate.friendsAtLocation;
-    
     [self loadShownClockPlaces];
     
     NSLog(@"finished loading");
 //    if (FBSession.activeSession.state == FBSessionStateCreatedTokenLoaded) {
 //        [FBSession sessionOpen];
-    
-        FBCacheDescriptor *cacheDescriptor = [FBFindFriendsController cacheDescriptor];
-        [cacheDescriptor prefetchAndCacheForSession:FBSession.activeSession];
+    FBCacheDescriptor *cacheDescriptor = [FBFindFriendsController cacheDescriptor];
+    [cacheDescriptor prefetchAndCacheForSession:FBSession.activeSession];
 //    }
     
     myGeofences = [[NSMutableArray alloc] init];
+    
     // Location Manager
     locationManager = [[CLLocationManager alloc] init];
-    locationManager.delegate = self;
     locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    locationManager.delegate = self;
     [locationManager startUpdatingLocation];
     currentLocation = locationManager.location;
+    
+    // Clear monitored locations
+    for (CLRegion *oldRegion in locationManager.monitoredRegions) {
+        [locationManager stopMonitoringForRegion:oldRegion];
+    }
+    
     [self monitorRegions];
-
-    self.geofences = [NSMutableArray arrayWithArray:[[self.locationManager monitoredRegions] allObjects]];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     // Remove old place icons
-    for (UIImageView *imgV in placeViews) {
+    for (UIImageView *imgV in iconViews) {
         [imgV removeFromSuperview];
     }
     [self loadShownClockPlaces];
-    [self monitorRegions];
 }
 
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - UI Behaviour
+
 - (void)loadShownClockPlaces {
-    placeViews = [NSMutableArray arrayWithCapacity:clockPlaces.count];
+    iconViews = [NSMutableArray arrayWithCapacity:clockPlaces.count];
     hands = [[NSMutableArray alloc] init];
     
     NSInteger numShownPlaces = 0;
@@ -110,43 +114,63 @@
         [imgV setFrame:CGRectMake(0, 0, 40, 30)];
         [placeV addSubview:imgV];
         [[self view] addSubview:placeV];
-        [placeViews addObject:placeV];
+        [iconViews addObject:placeV];
         angleIndex++;
     }
 }
 
 - (IBAction)addFriendsTouchHandler:(id)sender {
-    SettingsViewController *settingsController = [self.storyboard instantiateViewControllerWithIdentifier:@"SettingsViewController"];
+    settingsController = [self.storyboard instantiateViewControllerWithIdentifier:@"SettingsViewController"];
     settingsController.clockPlaces = clockPlaces;
     settingsController.myGeofences = myGeofences;
-    settingsController.currentLocation = currentLocation;
+    settingsController.currentLocation = locationManager.location;
+    settingsController.delegate = self;
     [self.navigationController pushViewController:settingsController animated:YES];
 }
 
+#pragma mark - SetingsViewController protocol method
+
+- (void)didUpdateGeofence:(GeofencePlace *)geofence changeType:(ChangeType)type {
+    if (type == deletedPlace || type == changedPlace) {
+        [locationManager stopMonitoringForRegion:geofence.fenceRegion];
+    }
+    if (type == newPlace || type == changedPlace) {
+        [locationManager startMonitoringForRegion:geofence.fenceRegion];
+    }
+    NSLog(@"Did update num monitored regions: %i", locationManager.monitoredRegions.count);
+}
+
+#pragma mark - Location manager methods
+
 - (void)monitorRegions {
-    for (geofencedPlace *place in myGeofences) {
+    for (GeofencePlace *place in myGeofences) {
         [locationManager startMonitoringForRegion:place.fenceRegion];
     }
 }
 
-- (IBAction)updateLocation:(id)sender {
-    NSLog(@"%f, %f", currentLocation.coordinate.latitude, currentLocation.coordinate.longitude);
-    self.withinGeofences = NO;
-    
-    NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
-        for (geofencedPlace *place in myGeofences) {
-            [locationManager requestStateForRegion:place.fenceRegion];
-        }
-        NSLog(@"within geofences: %i", self.withinGeofences);
-    }];
-    NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
-    [mainQueue addOperation:operation];
-}
-
-
-
 - (void)locationManager:(CLLocationManager *)manager didStartMonitoringForRegion:(CLRegion *)region {
     NSLog(@"Now monitoring %@", region.identifier);
+}
+
+- (IBAction)updateLocation:(id)sender {
+    NSString *coordinates = [NSString stringWithFormat:@"%f, %f", locationManager.location.coordinate.latitude, locationManager.location.coordinate.longitude];
+    self.withinGeofences = NO;
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:coordinates message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+    [alert show];
+    
+    NSLog(@"Num monitored regions: %i", locationManager.monitoredRegions.count);
+    for (GeofencePlace *place in myGeofences) {
+        [locationManager requestStateForRegion:place.fenceRegion];
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
+    if ([currentLocation distanceFromLocation:locationManager.location] > 10) {
+        // Register location change if greater than 10m
+        NSLog(@"Location changed");
+        currentLocation = locationManager.location;
+        [settingsController didUpdateCurrentLocation:currentLocation];
+    }
 }
 
 - (void)locationManager:(CLLocationManager *)manager didDetermineState:(CLRegionState)state forRegion:(CLRegion *)region {
@@ -161,7 +185,6 @@
         NSLog(@"Is outside region %@", region.identifier);
         
         CLCircularRegion *lastRegion = [[myGeofences lastObject] fenceRegion];
-
         if ([region isEqual:lastRegion] && self.withinGeofences == NO) {
             NSLog(@"Is outside all geofences");
             [self shareLocation:@"Other"];
@@ -169,14 +192,16 @@
     }
     else if (state == CLRegionStateUnknown) {
         NSLog(@"State unknown");
-        [self shareLocation:@"Unknown"];
+        // No update to database since previous location will be shared
     }
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
     NSLog(@"Location mgr failed: %@", error);
-    // Not updating to database since previous location will be shared
+    // No update to database since previous location will be shared
 }
+
+#pragma mark - Parse database
 
 - (void)shareLocation:(NSString *)name {
     [[PFUser currentUser] setObject:name forKey:@"location"];
@@ -185,11 +210,6 @@
     }];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 @end
 
 

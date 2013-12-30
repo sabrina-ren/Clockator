@@ -8,22 +8,21 @@
 
 #import "SettingsViewController.h"
 #import "FBFindFriendsController.h"
-#import "ClockFaceSettingsController.h"
+#import "PlaceIconViewController.h"
+#import "GeofencePlace.h"
 #import "Place.h"
-#import "geofencedPlace.h"
 #import "UIColor+customColours.h"
 
 @interface SettingsViewController ()
-
+@property (nonatomic) GeofenceViewController *geofenceController;
 @property (nonatomic) NSArray *settingsNames;
 @property (nonatomic) NSArray *settingsControllers;
 @property (nonatomic) NSInteger selectedRow;
-
 @end
 
 @implementation SettingsViewController
-@synthesize settingsNames, settingsControllers, clockPlaces, myGeofences;
-//@synthesize delegate;
+@synthesize clockPlaces, myGeofences;
+@synthesize geofenceController, settingsNames, settingsControllers;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -48,41 +47,17 @@
     FBFindFriendsController *findFriendsController = [[FBFindFriendsController alloc] init];
     [findFriendsController loadData];
 
-    ClockFaceSettingsController *clockFaceController = [self.storyboard instantiateViewControllerWithIdentifier:@"ClockFaceSettingsController"];
+    PlaceIconViewController *clockFaceController = [self.storyboard instantiateViewControllerWithIdentifier:@"PlaceIconViewController"];
     clockFaceController.clockPlaces = clockPlaces;
+    clockFaceController.isIconView = NO;
+    
     settingsControllers = [NSArray arrayWithObjects:findFriendsController, clockFaceController, nil];
-    
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-#pragma mark - MyPlaceViewController protocol method
-
-- (void)myPlacesViewController:(MyPlacesViewController *)controller didUpdateGeofence:(geofencedPlace *)geofence isNew:(BOOL)isNew {
-
-    if (isNew)[myGeofences addObject:geofence];
-    else myGeofences[self.selectedRow] = geofence;
-   
-    [self.tableView reloadData];
-    
-    if (isNew) {
-        NSIndexPath *path = [NSIndexPath indexPathForRow:self.selectedRow inSection:1];
-        NSArray *indexPaths = [NSArray arrayWithObject:path];
-        [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationLeft];
-    }
-    for (geofencedPlace *place in myGeofences) {
-        NSLog(@"Geofences %@", place.fenceName);
-    }
 }
 
 #pragma mark - Table view data source
@@ -110,8 +85,10 @@
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         NSString *title = settingsNames[indexPath.row];
         cell.textLabel.text = title;
-    } else if (indexPath.section == 1) {
+    }
+    else if (indexPath.section == 1) {
         if (indexPath.row == myGeofences.count) {
+            // Last row is to add a new place
             cell = [tableView dequeueReusableCellWithIdentifier:@"AddCell"];
             cell.textLabel.text = @"+";
             cell.textLabel.textColor = [UIColor customTurquoise];
@@ -132,13 +109,16 @@
         [self.navigationController pushViewController:settingsControllers[indexPath.row] animated:YES];
     } else {
         self.selectedRow = indexPath.row;
-         MyPlacesViewController *myPlacesController = [self.storyboard instantiateViewControllerWithIdentifier:@"MyPlacesViewController"];
-        myPlacesController.currentLocation = self.currentLocation;
-        if (myGeofences.count == indexPath.row) myPlacesController.geoPlace = nil;
-        else myPlacesController.geoPlace = myGeofences[indexPath.row];
-        
-        myPlacesController.delegate = self;
-        [self.navigationController pushViewController:myPlacesController animated:YES];
+         geofenceController = [self.storyboard instantiateViewControllerWithIdentifier:@"GeofenceViewController"];
+        geofenceController.clockPlaces = clockPlaces;
+        geofenceController.currentLocation = self.currentLocation;
+        geofenceController.delegate = self;
+
+        // If new place
+        if (myGeofences.count == indexPath.row) geofenceController.geoPlace = nil;
+        else geofenceController.geoPlace = myGeofences[indexPath.row];
+  
+        [self.navigationController pushViewController:geofenceController animated:YES];
     }
 }
 
@@ -150,7 +130,7 @@
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Return NO if you do not want the specified item to be editable.
+    // Second section is editable
     if (indexPath.section == 1 && indexPath.row != myGeofences.count) return YES;
     return NO;
 }
@@ -161,6 +141,7 @@
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
+        [self.delegate didUpdateGeofence:myGeofences[indexPath.row] changeType:deletedPlace];
         [myGeofences removeObjectAtIndex:indexPath.row];
 
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
@@ -170,34 +151,35 @@
     }   
 }
 
+#pragma mark - Update current location
 
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a story board-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)didUpdateCurrentLocation:(CLLocation *)newLocation {
+    geofenceController.currentLocation = newLocation;
+    NSLog(@"YAY coordinates updated");
 }
 
- */
+#pragma mark - MyPlaceViewController protocol method
 
+- (void)geofenceViewController:(GeofenceViewController *)controller didUpdateGeofence:(GeofencePlace *)geofence isNew:(BOOL)isNew {
+    if (isNew){
+        [myGeofences addObject:geofence];
+        [self.delegate didUpdateGeofence:geofence changeType:newPlace];
+    }
+    else {
+        myGeofences[self.selectedRow] = geofence;
+        [self.delegate didUpdateGeofence:geofence changeType:changedPlace];
+    }
+    [self.tableView reloadData];
+    
+    if (isNew) {
+        NSIndexPath *path = [NSIndexPath indexPathForRow:self.selectedRow inSection:1];
+        NSArray *indexPaths = [NSArray arrayWithObject:path];
+        [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationLeft];
+    }
+    for (GeofencePlace *place in myGeofences) {
+        NSLog(@"Geofences %@", place.fenceName);
+    }
+    
+}
 
 @end
