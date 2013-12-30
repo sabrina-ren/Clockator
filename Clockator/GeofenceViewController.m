@@ -135,8 +135,8 @@
 }
 
 - (void)doneButtonActionHandler:(id)sender {
-    
-    CLCircularRegion *region = [[CLCircularRegion alloc] initWithCenter:coords radius:self.radius identifier:nameField.text];
+    NSString *iden = [NSString stringWithFormat:@"%i%@", self.iconIndex, nameField.text];
+    CLCircularRegion *region = [[CLCircularRegion alloc] initWithCenter:coords radius:self.radius identifier:iden];
     if (placemark) {
         BOOL isNew = TRUE;
         if (geoPlace) isNew = NO;

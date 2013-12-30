@@ -179,7 +179,7 @@
     if (state == CLRegionStateInside) {
         NSLog(@"Is inside %@", region.identifier);
         self.withinGeofences = YES;
-        [self shareLocation:region.identifier];
+        [self shareLocation:[region.identifier substringFromIndex:1] iconIndex:[region.identifier substringToIndex:1]];
     }
     else if (state == CLRegionStateOutside) {
         NSLog(@"Is outside region %@", region.identifier);
@@ -187,7 +187,7 @@
         CLCircularRegion *lastRegion = [[myGeofences lastObject] fenceRegion];
         if ([region isEqual:lastRegion] && self.withinGeofences == NO) {
             NSLog(@"Is outside all geofences");
-            [self shareLocation:@"Other"];
+            [self shareLocation:@"Other" iconIndex:@"2"];
         }
     }
     else if (state == CLRegionStateUnknown) {
@@ -203,8 +203,9 @@
 
 #pragma mark - Parse database
 
-- (void)shareLocation:(NSString *)name {
+- (void)shareLocation:(NSString *)name iconIndex:(NSString *)index {
     [[PFUser currentUser] setObject:name forKey:@"location"];
+    [[PFUser currentUser] setObject:index forKey:@"iconIndex"];
     [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) NSLog(@"Save succeeded");
     }];
