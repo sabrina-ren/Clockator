@@ -1,5 +1,5 @@
 //
-//  ViewController.m
+//  ClockViewController.m
 //  Clockator
 //
 //  Created by Sabrina Ren on 11/22/2013.
@@ -9,23 +9,27 @@
 #import "ClockViewController.h"
 #import "FBFindFriendsController.h"
 #import "SettingsViewController.h"
+#import "GeofencePlace.h"
 #import "Place.h"
-#import "geofencedPlace.h"
 
 @interface ClockViewController ()
-
 @property (nonatomic) NSMutableArray *clockPlaces;
+@property (nonatomic) NSMutableArray *iconViews;
 @property (nonatomic) NSMutableArray *myGeofences;
-@property (nonatomic) NSMutableArray *placeViews;
+@property (nonatomic, retain) NSMutableArray *hands;
+
+@property (nonatomic) SettingsViewController *settingsController;
+
+@property (nonatomic) CLLocation *currentLocation;
 @property (nonatomic) CLLocationManager *locationManager;
 @property BOOL didStartMonitoringRegion;
-@property (nonatomic) NSMutableArray *geofences;
-
+@property BOOL withinGeofences;
 @end
 
 @implementation ClockViewController
-@synthesize locations, friends, friendsAtLocation, hands, placeViews;
-@synthesize clockPlaces, myGeofences, locationManager;
+@synthesize clockPlaces, iconViews, myGeofences, hands;
+@synthesize settingsController;
+@synthesize currentLocation, locationManager;
 
 - (void)viewDidLoad
 {
@@ -39,174 +43,44 @@
     self.navigationItem.titleView = titleLabel;
     
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithTitle:@"Add" style:UIBarButtonSystemItemAdd target:self action:@selector(addFriendsTouchHandler:)];
+    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithTitle:@"Add" style:UIBarButtonItemStylePlain target:self action:@selector(addFriendsTouchHandler:)];
     self.navigationItem.rightBarButtonItem = addButton;
     
     // Get default clock places
     clockPlaces = [Place getDefaultPlaces];
 
-    AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    [self loadShownClockPlaces];
     
-//    CGRect screenRect = [[UIScreen mainScreen] bounds];
-//    CGFloat screenWidth = screenRect.size.width;
-//    CGFloat screenHeight = screenRect.size.height;
-//    NSLog(@"%f",screenWidth);
-    
-    // Temp hardcoded data for demo
-    friends = appDelegate.friends;
-    locations = appDelegate.locations;
-    friendsAtLocation = appDelegate.friendsAtLocation;
-    
-    
-    NSInteger numPlaces = 0; // Number of shown places is different from total number of potentially shown places
-    for (Place *thisPlace in clockPlaces) {
-        if (thisPlace.isShown) numPlaces++;
-    }
-    placeViews = [NSMutableArray arrayWithCapacity:clockPlaces.count];
-    double angle = 2*M_PI/numPlaces;
-    int angleIndex = 0; // Separate index to track index of shown places
-    
-    for (int i=0; i<clockPlaces.count; i++) {
-        if (![clockPlaces[i] isShown]) continue;
-        CGFloat locRadius = 140;
-        CGFloat x = 140 + locRadius*cos(angle*angleIndex + M_PI/2);
-        CGFloat y = 200 - locRadius*sin(angle*angleIndex + M_PI/2);
-        
-        UIView *placeV = [[UIView alloc] initWithFrame:CGRectMake(x,y,2,40)];
-        UIImageView *imgV = [[UIImageView alloc] initWithImage:[clockPlaces[i] placeIcon]];
-        [imgV setFrame:CGRectMake(0, 0, 40, 30)];
-        [placeV addSubview:imgV];
-        [[self view] addSubview:placeV];
-        [placeViews addObject:placeV];
-        
-        if ([friendsAtLocation[i] count]==1) {
-            CGFloat radius = 90;
-            x = 140 + radius*cos(angle*i + M_PI/2);
-            y = 200 - radius*sin(angle*i + M_PI/2);
-            
-            UIImageView *newHand = [[UIImageView alloc] initWithImage: [UIImage imageNamed:@"hand.png"]];
-            [newHand setFrame:CGRectMake(52, 215, 217, 10)];
-            [hands addObject:newHand];
-            [[self view] addSubview:newHand];
-            [self.view sendSubviewToBack:newHand];
-            
-//            CABasicAnimation *rotationAnimation;
-//            rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
-//            rotationAnimation.toValue = [NSNumber numberWithFloat:angle*(-i)+M_PI/2+M_PI*3];
-//            rotationAnimation.duration = 1.5;
-//            rotationAnimation.cumulative = NO;
-//            rotationAnimation.fillMode = kCAFillModeForwards;
-//            rotationAnimation.removedOnCompletion = NO;
-//            [newHand.layer setAnchorPoint:CGPointMake(0.5,0.5)];
-//            [newHand.layer addAnimation:rotationAnimation forKey:@"rotationAnimation"];
-            
-            
-            // Temp hardcoded friend data
-            Friend *locatedFriend = [[Friend alloc] init];
-            locatedFriend = [friendsAtLocation[i] objectAtIndex:0];
-            UIView *friendView = [[UIView alloc] initWithFrame:CGRectMake(x,y,2,40)];
-            UIImageView *friendImage = [[UIImageView alloc] initWithImage:locatedFriend.picture];
-            [friendImage setFrame:CGRectMake(0,0,45,45)];
-            [friendView addSubview:friendImage];
-            [[self view] addSubview:friendView];
-        }
-        angleIndex++;
-    }
     NSLog(@"finished loading");
 //    if (FBSession.activeSession.state == FBSessionStateCreatedTokenLoaded) {
 //        [FBSession sessionOpen];
-    
-        FBCacheDescriptor *cacheDescriptor = [FBFindFriendsController cacheDescriptor];
-        [cacheDescriptor prefetchAndCacheForSession:FBSession.activeSession];
+    FBCacheDescriptor *cacheDescriptor = [FBFindFriendsController cacheDescriptor];
+    [cacheDescriptor prefetchAndCacheForSession:FBSession.activeSession];
 //    }
     
     myGeofences = [[NSMutableArray alloc] init];
+    
     // Location Manager
     locationManager = [[CLLocationManager alloc] init];
-    locationManager.delegate = self;
     locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    locationManager.delegate = self;
     [locationManager startUpdatingLocation];
+    currentLocation = locationManager.location;
+    
+    // Clear monitored locations
+    for (CLRegion *oldRegion in locationManager.monitoredRegions) {
+        [locationManager stopMonitoringForRegion:oldRegion];
+    }
+    
     [self monitorRegions];
-
-    self.geofences = [NSMutableArray arrayWithArray:[[self.locationManager monitoredRegions] allObjects]];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    [self loadShownPlaces];
-    [self monitorRegions];
-
-    for (geofencedPlace *place in myGeofences) {
-        NSLog(@"Clock View geofences %@", place.fenceName);
-    }
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-
-}
-
-- (void)loadShownPlaces {
-    for (UIImageView *imgV in placeViews) {
+    // Remove old place icons
+    for (UIImageView *imgV in iconViews) {
         [imgV removeFromSuperview];
     }
-    placeViews = [NSMutableArray arrayWithCapacity:clockPlaces.count];
-    
-    NSInteger numPlaces = 0;
-    for (Place *thisPlace in clockPlaces) {
-        if (thisPlace.isShown) numPlaces++;
-    }
-    double angle = 2*M_PI/numPlaces;
-    
-    int angleIndex = 0;
-    
-    for (int i=0; i<clockPlaces.count; i++) {
-        if (![clockPlaces[i] isShown]) continue;
-        CGFloat locRadius = 140;
-        CGFloat x = 140 + locRadius*cos(angle*angleIndex + M_PI/2);
-        CGFloat y = 200 - locRadius*sin(angle*angleIndex + M_PI/2);
-        
-        UIView *placeV = [[UIView alloc] initWithFrame:CGRectMake(x,y,2,40)];
-        UIImageView *imgV = [[UIImageView alloc] initWithImage:[clockPlaces[i] placeIcon]];
-        [imgV setFrame:CGRectMake(0, 0, 40, 30)];
-        [placeV addSubview:imgV];
-        [[self view] addSubview:placeV];
-        [placeViews addObject:placeV];
-        angleIndex++;
-    }
-}
-
-- (IBAction)addFriendsTouchHandler:(id)sender {
-    SettingsViewController *settingsController = [self.storyboard instantiateViewControllerWithIdentifier:@"SettingsViewController"];
-    settingsController.clockPlaces = clockPlaces;
-    settingsController.myGeofences = myGeofences;
-    [self.navigationController pushViewController:settingsController animated:YES];
-}
-
-- (void)monitorRegions {
-    for (geofencedPlace *place in myGeofences) {
-        [locationManager startMonitoringForRegion:place.fenceRegion];
-    }
-}
-
-- (IBAction)updateLocation:(id)sender {
-    NSLog(@"%f, %f", locationManager.location.coordinate.latitude, locationManager.location.coordinate.longitude);
-    geofencedPlace *place = myGeofences[0];
-    [locationManager requestStateForRegion:place.fenceRegion];
-}
-
-- (void)locationManager:(CLLocationManager *)manager didStartMonitoringForRegion:(CLRegion *)region {
-    NSLog(@"Now monitoring %@", region.identifier);
-}
-
-- (void)locationManager:(CLLocationManager *)manager didDetermineState:(CLRegionState)state forRegion:(CLRegion *)region {
-    NSLog(@"Location manager determined state");
-    
-    if (state == CLRegionStateInside) {
-        NSLog(@"is inside region");
-        [[PFUser currentUser] setObject:region.identifier forKey:@"location"];
-        [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            if (succeeded) NSLog(@"Save succeeded");
-        }];
-    }
+    [self loadShownClockPlaces];
 }
 
 - (void)didReceiveMemoryWarning
@@ -214,6 +88,129 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+#pragma mark - UI Behaviour
+
+- (void)loadShownClockPlaces {
+    iconViews = [NSMutableArray arrayWithCapacity:clockPlaces.count];
+    hands = [[NSMutableArray alloc] init];
+    
+    NSInteger numShownPlaces = 0;
+    for (Place *thisPlace in clockPlaces) {
+        if (thisPlace.isShown) numShownPlaces++;
+    }
+    double angle = 2*M_PI/numShownPlaces;
+    
+    int angleIndex = 0; // Tracks index of shown places not all clock places
+    
+    for (int i=0; i<clockPlaces.count; i++) {
+        if (![clockPlaces[i] isShown]) continue;
+        CGFloat locRadius = 140;
+        CGFloat x = 140 + locRadius*cos(angle*angleIndex + M_PI/2);
+        CGFloat y = 200 - locRadius*sin(angle*angleIndex + M_PI/2);
+        
+        UIView *placeV = [[UIView alloc] initWithFrame:CGRectMake(x,y,2,40)];
+        UIImageView *imgV = [[UIImageView alloc] initWithImage:[clockPlaces[i] placeIcon]];
+        [imgV setFrame:CGRectMake(0, 0, 40, 30)];
+        [placeV addSubview:imgV];
+        [[self view] addSubview:placeV];
+        [iconViews addObject:placeV];
+        angleIndex++;
+    }
+}
+
+- (IBAction)addFriendsTouchHandler:(id)sender {
+    settingsController = [self.storyboard instantiateViewControllerWithIdentifier:@"SettingsViewController"];
+    settingsController.clockPlaces = clockPlaces;
+    settingsController.myGeofences = myGeofences;
+    settingsController.currentLocation = locationManager.location;
+    settingsController.delegate = self;
+    [self.navigationController pushViewController:settingsController animated:YES];
+}
+
+#pragma mark - SetingsViewController protocol method
+
+- (void)didUpdateGeofence:(GeofencePlace *)geofence changeType:(ChangeType)type {
+    if (type == deletedPlace || type == changedPlace) {
+        [locationManager stopMonitoringForRegion:geofence.fenceRegion];
+    }
+    if (type == newPlace || type == changedPlace) {
+        [locationManager startMonitoringForRegion:geofence.fenceRegion];
+    }
+    NSLog(@"Did update num monitored regions: %i", locationManager.monitoredRegions.count);
+}
+
+#pragma mark - Location manager methods
+
+- (void)monitorRegions {
+    for (GeofencePlace *place in myGeofences) {
+        [locationManager startMonitoringForRegion:place.fenceRegion];
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didStartMonitoringForRegion:(CLRegion *)region {
+    NSLog(@"Now monitoring %@", region.identifier);
+}
+
+- (IBAction)updateLocation:(id)sender {
+    NSString *coordinates = [NSString stringWithFormat:@"%f, %f", locationManager.location.coordinate.latitude, locationManager.location.coordinate.longitude];
+    self.withinGeofences = NO;
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:coordinates message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+    [alert show];
+    
+    NSLog(@"Num monitored regions: %i", locationManager.monitoredRegions.count);
+    for (GeofencePlace *place in myGeofences) {
+        [locationManager requestStateForRegion:place.fenceRegion];
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
+    if ([currentLocation distanceFromLocation:locationManager.location] > 10) {
+        // Register location change if greater than 10m
+        NSLog(@"Location changed");
+        currentLocation = locationManager.location;
+        [settingsController didUpdateCurrentLocation:currentLocation];
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didDetermineState:(CLRegionState)state forRegion:(CLRegion *)region {
+    NSLog(@"Location manager determined state");
+    
+    if (state == CLRegionStateInside) {
+        NSLog(@"Is inside %@", region.identifier);
+        self.withinGeofences = YES;
+        [self shareLocation:[region.identifier substringFromIndex:1] iconIndex:[region.identifier substringToIndex:1]];
+    }
+    else if (state == CLRegionStateOutside) {
+        NSLog(@"Is outside region %@", region.identifier);
+        
+        CLCircularRegion *lastRegion = [[myGeofences lastObject] fenceRegion];
+        if ([region isEqual:lastRegion] && self.withinGeofences == NO) {
+            NSLog(@"Is outside all geofences");
+            [self shareLocation:@"Other" iconIndex:@"2"];
+        }
+    }
+    else if (state == CLRegionStateUnknown) {
+        NSLog(@"State unknown");
+        // No update to database since previous location will be shared
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    NSLog(@"Location mgr failed: %@", error);
+    // No update to database since previous location will be shared
+}
+
+#pragma mark - Parse database
+
+- (void)shareLocation:(NSString *)name iconIndex:(NSString *)index {
+    [[PFUser currentUser] setObject:name forKey:@"location"];
+    [[PFUser currentUser] setObject:index forKey:@"iconIndex"];
+    [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) NSLog(@"Save succeeded");
+    }];
+}
+
 @end
 
 

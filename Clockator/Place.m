@@ -10,15 +10,16 @@
 
 @implementation Place
 
-@synthesize placeName, placeIcon, isShown, placeAddress;
+@synthesize placeName, placeIcon, placeIndex, isShown;
 
 + (NSMutableArray *)getDefaultPlaces {
-    NSArray *names = @[@"Other", @"Bar", @"Home", @"School", @"Work"];
+    NSArray *names = @[@"Bar", @"Home", @"Other", @"School", @"Work"];
     
     NSMutableArray *defaultPlaces = [[NSMutableArray alloc] init];
     
-    for (NSString *newName in names) {
-        Place *newPlace = [[Place alloc] initWithName:newName icon:[UIImage imageNamed:[newName stringByAppendingPathExtension:@"png"]]];
+    for (int i=0; i<names.count; i++) {
+        Place *newPlace = [[Place alloc] initWithName:names[i] icon:[UIImage imageNamed:[names[i] stringByAppendingPathExtension:@"png"]]];
+        newPlace.placeIndex = i;
         [defaultPlaces addObject:newPlace];
     }
     return defaultPlaces;

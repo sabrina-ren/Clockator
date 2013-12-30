@@ -7,20 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2912532018703BA3001A77C6 /* marathon.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 2912531F18703BA3001A77C6 /* marathon.gpx */; };
 		2917E8F61868052900A46AD7 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2917E8F51868052900A46AD7 /* SettingsViewController.m */; };
-		2917E94E1869291E00A46AD7 /* MyPlacesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2917E94D1869291E00A46AD7 /* MyPlacesViewController.m */; };
+		2917E94E1869291E00A46AD7 /* GeofenceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2917E94D1869291E00A46AD7 /* GeofenceViewController.m */; };
 		2917E9511869689100A46AD7 /* Place.m in Sources */ = {isa = PBXBuildFile; fileRef = 2917E9501869689100A46AD7 /* Place.m */; };
 		2917E95718696E1700A46AD7 /* Bar.png in Resources */ = {isa = PBXBuildFile; fileRef = 2917E95218696E1700A46AD7 /* Bar.png */; };
 		2917E95818696E1700A46AD7 /* Home.png in Resources */ = {isa = PBXBuildFile; fileRef = 2917E95318696E1700A46AD7 /* Home.png */; };
 		2917E95918696E1700A46AD7 /* Other.png in Resources */ = {isa = PBXBuildFile; fileRef = 2917E95418696E1700A46AD7 /* Other.png */; };
 		2917E95A18696E1700A46AD7 /* School.png in Resources */ = {isa = PBXBuildFile; fileRef = 2917E95518696E1700A46AD7 /* School.png */; };
 		2917E95B18696E1700A46AD7 /* Work.png in Resources */ = {isa = PBXBuildFile; fileRef = 2917E95618696E1700A46AD7 /* Work.png */; };
-		2917E95E18697D7600A46AD7 /* ClockFaceSettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2917E95D18697D7600A46AD7 /* ClockFaceSettingsController.m */; };
+		2917E95E18697D7600A46AD7 /* PlaceIconViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2917E95D18697D7600A46AD7 /* PlaceIconViewController.m */; };
 		2917E961186A2F2000A46AD7 /* UIColor+customColours.m in Sources */ = {isa = PBXBuildFile; fileRef = 2917E960186A2F2000A46AD7 /* UIColor+customColours.m */; };
 		2917E965186AEA8F00A46AD7 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2917E964186AEA8F00A46AD7 /* MapKit.framework */; };
-		293FD5D4186B93C000F2CB61 /* geofencedPlace.m in Sources */ = {isa = PBXBuildFile; fileRef = 293FD5D3186B93C000F2CB61 /* geofencedPlace.m */; };
+		293FD5D4186B93C000F2CB61 /* GeofencePlace.m in Sources */ = {isa = PBXBuildFile; fileRef = 293FD5D3186B93C000F2CB61 /* GeofencePlace.m */; };
 		293FD5D6186B97C300F2CB61 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 293FD5D5186B97C300F2CB61 /* AddressBookUI.framework */; };
 		293FD5DF186D585300F2CB61 /* AppKeys.m in Sources */ = {isa = PBXBuildFile; fileRef = 293FD5DE186D585300F2CB61 /* AppKeys.m */; };
+		293FD5E4186EB2E900F2CB61 /* CurrentLocation.png in Resources */ = {isa = PBXBuildFile; fileRef = 293FD5E3186EB2E900F2CB61 /* CurrentLocation.png */; };
 		2983120C1840480A00F62170 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983120B1840480A00F62170 /* Foundation.framework */; };
 		2983120E1840480A00F62170 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983120D1840480A00F62170 /* CoreGraphics.framework */; };
 		298312101840480A00F62170 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983120F1840480A00F62170 /* UIKit.framework */; };
@@ -53,10 +55,10 @@
 		298312711843218400F62170 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 298312701843218400F62170 /* StoreKit.framework */; };
 		298312731843218C00F62170 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 298312721843218C00F62170 /* SystemConfiguration.framework */; };
 		29831275184439E900F62170 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29831274184439E900F62170 /* FacebookSDK.framework */; };
-		2983129918443F5F00F62170 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2983129818443F5F00F62170 /* LoginViewController.m */; };
 		2983129B184441D600F62170 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983129A184441D600F62170 /* libz.dylib */; };
-		2983129E184449D400F62170 /* UserInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2983129D184449D400F62170 /* UserInfoViewController.m */; };
 		29921BCB18662B1600443362 /* FBFindFriendsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29921BCA18662B1600443362 /* FBFindFriendsController.m */; };
+		29B8F34918717A690066950A /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B8F34818717A690066950A /* LoginViewController.m */; };
+		29B8F34C18717A7C0066950A /* UserInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B8F34B18717A7C0066950A /* UserInfoViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,10 +72,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2912531F18703BA3001A77C6 /* marathon.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = marathon.gpx; path = ../marathon.gpx; sourceTree = "<group>"; };
 		2917E8F41868052900A46AD7 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		2917E8F51868052900A46AD7 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
-		2917E94C1869291E00A46AD7 /* MyPlacesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyPlacesViewController.h; sourceTree = "<group>"; };
-		2917E94D1869291E00A46AD7 /* MyPlacesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyPlacesViewController.m; sourceTree = "<group>"; };
+		2917E94C1869291E00A46AD7 /* GeofenceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeofenceViewController.h; sourceTree = "<group>"; };
+		2917E94D1869291E00A46AD7 /* GeofenceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeofenceViewController.m; sourceTree = "<group>"; };
 		2917E94F1869689100A46AD7 /* Place.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Place.h; sourceTree = "<group>"; };
 		2917E9501869689100A46AD7 /* Place.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Place.m; sourceTree = "<group>"; };
 		2917E95218696E1700A46AD7 /* Bar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Bar.png; path = Graphics/Bar.png; sourceTree = "<group>"; };
@@ -81,16 +84,17 @@
 		2917E95418696E1700A46AD7 /* Other.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Other.png; path = Graphics/Other.png; sourceTree = "<group>"; };
 		2917E95518696E1700A46AD7 /* School.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = School.png; path = Graphics/School.png; sourceTree = "<group>"; };
 		2917E95618696E1700A46AD7 /* Work.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Work.png; path = Graphics/Work.png; sourceTree = "<group>"; };
-		2917E95C18697D7600A46AD7 /* ClockFaceSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClockFaceSettingsController.h; sourceTree = "<group>"; };
-		2917E95D18697D7600A46AD7 /* ClockFaceSettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClockFaceSettingsController.m; sourceTree = "<group>"; };
+		2917E95C18697D7600A46AD7 /* PlaceIconViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceIconViewController.h; sourceTree = "<group>"; };
+		2917E95D18697D7600A46AD7 /* PlaceIconViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceIconViewController.m; sourceTree = "<group>"; };
 		2917E95F186A2F2000A46AD7 /* UIColor+customColours.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+customColours.h"; sourceTree = "<group>"; };
 		2917E960186A2F2000A46AD7 /* UIColor+customColours.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+customColours.m"; sourceTree = "<group>"; };
 		2917E964186AEA8F00A46AD7 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		293FD5D2186B93C000F2CB61 /* geofencedPlace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = geofencedPlace.h; sourceTree = "<group>"; };
-		293FD5D3186B93C000F2CB61 /* geofencedPlace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = geofencedPlace.m; sourceTree = "<group>"; };
+		293FD5D2186B93C000F2CB61 /* GeofencePlace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeofencePlace.h; sourceTree = "<group>"; };
+		293FD5D3186B93C000F2CB61 /* GeofencePlace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeofencePlace.m; sourceTree = "<group>"; };
 		293FD5D5186B97C300F2CB61 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		293FD5DD186D584500F2CB61 /* AppKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKeys.h; sourceTree = "<group>"; };
 		293FD5DE186D585300F2CB61 /* AppKeys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppKeys.m; sourceTree = SOURCE_ROOT; };
+		293FD5E3186EB2E900F2CB61 /* CurrentLocation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = CurrentLocation.png; path = Graphics/CurrentLocation.png; sourceTree = "<group>"; };
 		298312081840480A00F62170 /* Clockator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clockator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2983120B1840480A00F62170 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2983120D1840480A00F62170 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -129,13 +133,13 @@
 		298312701843218400F62170 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		298312721843218C00F62170 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		29831274184439E900F62170 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
-		2983129718443F5F00F62170 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoginViewController.h; path = ../../Clockator1/Clockator/LoginViewController.h; sourceTree = "<group>"; };
-		2983129818443F5F00F62170 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LoginViewController.m; path = ../../Clockator1/Clockator/LoginViewController.m; sourceTree = "<group>"; };
 		2983129A184441D600F62170 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		2983129C184449D400F62170 /* UserInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserInfoViewController.h; path = ../../Clockator1/Clockator/UserInfoViewController.h; sourceTree = "<group>"; };
-		2983129D184449D400F62170 /* UserInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserInfoViewController.m; path = ../../Clockator1/Clockator/UserInfoViewController.m; sourceTree = "<group>"; };
 		29921BC918662B1500443362 /* FBFindFriendsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBFindFriendsController.h; sourceTree = "<group>"; };
 		29921BCA18662B1600443362 /* FBFindFriendsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBFindFriendsController.m; sourceTree = "<group>"; };
+		29B8F34718717A690066950A /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
+		29B8F34818717A690066950A /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
+		29B8F34A18717A7C0066950A /* UserInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInfoViewController.h; sourceTree = "<group>"; };
+		29B8F34B18717A7C0066950A /* UserInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserInfoViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +183,7 @@
 		298311FF1840480A00F62170 = {
 			isa = PBXGroup;
 			children = (
+				2912531F18703BA3001A77C6 /* marathon.gpx */,
 				298312111840480A00F62170 /* Clockator */,
 				298312301840480A00F62170 /* ClockatorTests */,
 				2983120A1840480A00F62170 /* Frameworks */,
@@ -271,20 +276,20 @@
 		2983129F184449E800F62170 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				2983129718443F5F00F62170 /* LoginViewController.h */,
-				2983129818443F5F00F62170 /* LoginViewController.m */,
-				2983129C184449D400F62170 /* UserInfoViewController.h */,
-				2983129D184449D400F62170 /* UserInfoViewController.m */,
+				29B8F34718717A690066950A /* LoginViewController.h */,
+				29B8F34818717A690066950A /* LoginViewController.m */,
+				29B8F34A18717A7C0066950A /* UserInfoViewController.h */,
+				29B8F34B18717A7C0066950A /* UserInfoViewController.m */,
 				298312201840480A00F62170 /* ClockViewController.h */,
 				298312211840480A00F62170 /* ClockViewController.m */,
 				2917E8F41868052900A46AD7 /* SettingsViewController.h */,
 				2917E8F51868052900A46AD7 /* SettingsViewController.m */,
+				2917E94C1869291E00A46AD7 /* GeofenceViewController.h */,
+				2917E94D1869291E00A46AD7 /* GeofenceViewController.m */,
+				2917E95C18697D7600A46AD7 /* PlaceIconViewController.h */,
+				2917E95D18697D7600A46AD7 /* PlaceIconViewController.m */,
 				29921BC918662B1500443362 /* FBFindFriendsController.h */,
 				29921BCA18662B1600443362 /* FBFindFriendsController.m */,
-				2917E95C18697D7600A46AD7 /* ClockFaceSettingsController.h */,
-				2917E95D18697D7600A46AD7 /* ClockFaceSettingsController.m */,
-				2917E94C1869291E00A46AD7 /* MyPlacesViewController.h */,
-				2917E94D1869291E00A46AD7 /* MyPlacesViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -292,6 +297,7 @@
 		298312A0184449FD00F62170 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				293FD5E3186EB2E900F2CB61 /* CurrentLocation.png */,
 				2917E95218696E1700A46AD7 /* Bar.png */,
 				2917E95318696E1700A46AD7 /* Home.png */,
 				2917E95418696E1700A46AD7 /* Other.png */,
@@ -308,8 +314,8 @@
 		298312A118444A1200F62170 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				293FD5D2186B93C000F2CB61 /* geofencedPlace.h */,
-				293FD5D3186B93C000F2CB61 /* geofencedPlace.m */,
+				293FD5D2186B93C000F2CB61 /* GeofencePlace.h */,
+				293FD5D3186B93C000F2CB61 /* GeofencePlace.m */,
 				2917E94F1869689100A46AD7 /* Place.h */,
 				2917E9501869689100A46AD7 /* Place.m */,
 				298312591840667F00F62170 /* Friend.h */,
@@ -397,6 +403,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2917E95A18696E1700A46AD7 /* School.png in Resources */,
+				293FD5E4186EB2E900F2CB61 /* CurrentLocation.png in Resources */,
 				2917E95818696E1700A46AD7 /* Home.png in Resources */,
 				2983124A18404F5200F62170 /* Channel_Slanted1.ttf in Resources */,
 				298312241840480A00F62170 /* Images.xcassets in Resources */,
@@ -408,6 +415,7 @@
 				2983125418405D7C00F62170 /* Clockator.sqlite in Resources */,
 				2983121F1840480A00F62170 /* Main.storyboard in Resources */,
 				2917E95718696E1700A46AD7 /* Bar.png in Resources */,
+				2912532018703BA3001A77C6 /* marathon.gpx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -427,20 +435,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				293FD5D4186B93C000F2CB61 /* geofencedPlace.m in Sources */,
+				293FD5D4186B93C000F2CB61 /* GeofencePlace.m in Sources */,
 				298312221840480A00F62170 /* ClockViewController.m in Sources */,
 				29921BCB18662B1600443362 /* FBFindFriendsController.m in Sources */,
-				2917E95E18697D7600A46AD7 /* ClockFaceSettingsController.m in Sources */,
+				2917E95E18697D7600A46AD7 /* PlaceIconViewController.m in Sources */,
+				29B8F34918717A690066950A /* LoginViewController.m in Sources */,
+				29B8F34C18717A7C0066950A /* UserInfoViewController.m in Sources */,
 				2917E9511869689100A46AD7 /* Place.m in Sources */,
-				2917E94E1869291E00A46AD7 /* MyPlacesViewController.m in Sources */,
+				2917E94E1869291E00A46AD7 /* GeofenceViewController.m in Sources */,
 				2983125018405A3B00F62170 /* Location.m in Sources */,
 				2983121C1840480A00F62170 /* AppDelegate.m in Sources */,
 				2917E961186A2F2000A46AD7 /* UIColor+customColours.m in Sources */,
 				2983125B1840667F00F62170 /* Friend.m in Sources */,
-				2983129918443F5F00F62170 /* LoginViewController.m in Sources */,
 				2917E8F61868052900A46AD7 /* SettingsViewController.m in Sources */,
 				293FD5DF186D585300F2CB61 /* AppKeys.m in Sources */,
-				2983129E184449D400F62170 /* UserInfoViewController.m in Sources */,
 				298312181840480A00F62170 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

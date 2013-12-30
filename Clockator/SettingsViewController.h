@@ -6,16 +6,30 @@
 //  Copyright (c) 2013 Sabrina Ren. All rights reserved.
 //
 
+#import "GeofenceViewController.h"
 #import <UIKit/UIKit.h>
-#import "MyPlacesViewController.h"
 
-//@protocol SettingsDelegate <NSObject>
-//- (void)updateMyPlaces:(NSMutableArray *)places;
-//@end
+@class SettingsViewController;
+@class GeofencePlace;
 
-@interface SettingsViewController : UITableViewController <MyPlacesViewControllerDelegate>
+typedef enum {
+    newPlace,
+    deletedPlace,
+    changedPlace
+} ChangeType;
 
+@protocol SettingsControllerDelegate <NSObject>
+- (void)didUpdateGeofence:(GeofencePlace *)geofence changeType:(ChangeType)type;
+@end
+
+@interface SettingsViewController : UITableViewController <GeofenceControllerDelegate>
+
+@property (nonatomic) CLLocation *currentLocation;
 @property (nonatomic) NSMutableArray *clockPlaces;
 @property (nonatomic) NSMutableArray *myGeofences;
+
+@property (nonatomic, weak) id <SettingsControllerDelegate> delegate;
+
+- (void)didUpdateCurrentLocation:(CLLocation *)newLocation;
 
 @end

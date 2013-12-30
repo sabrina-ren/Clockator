@@ -12,8 +12,8 @@
 
 @property (nonatomic) NSString *placeName;
 @property (nonatomic) UIImage *placeIcon;
+@property (nonatomic) NSInteger placeIndex;
 @property (nonatomic) BOOL isShown;
-@property (nonatomic) NSString *placeAddress;
 
 + (NSMutableArray *)getDefaultPlaces;
 
