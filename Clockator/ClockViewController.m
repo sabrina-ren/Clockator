@@ -8,6 +8,7 @@
 
 #import "ClockViewController.h"
 #import "FBFindFriendsController.h"
+#import "LoginViewController.h"
 #import "SettingsViewController.h"
 #import "GeofencePlace.h"
 #import "Place.h"
@@ -17,7 +18,6 @@
 @property (nonatomic) NSMutableArray *iconViews;
 @property (nonatomic) NSMutableArray *myGeofences;
 @property (nonatomic, retain) NSMutableArray *hands;
-
 @property (nonatomic) SettingsViewController *settingsController;
 
 @property (nonatomic) CLLocation *currentLocation;
@@ -27,8 +27,8 @@
 @end
 
 @implementation ClockViewController
-@synthesize clockPlaces, iconViews, myGeofences, hands;
-@synthesize settingsController;
+@synthesize clockPlaces, iconViews, myGeofences, hands, settingsController;
+@synthesize friendIds;
 @synthesize currentLocation, locationManager;
 
 - (void)viewDidLoad
@@ -36,6 +36,8 @@
     [super viewDidLoad];
     
     // Appearance setup
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 10, 40)];
     [titleLabel setFont:[UIFont fontWithName:@"ChannelSlanted1" size:20]];
     [titleLabel setTextColor:[UIColor whiteColor]];
@@ -73,9 +75,24 @@
     }
     
     [self monitorRegions];
+    
+//    PFQuery *query = [PFUser query];
+//    [query whereKey:@"displayName" equalTo:@"Sandra Amgdbgfgabbi Smithberg"];
+//    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+//        PFUser *user = [objects firstObject];
+//        NSLog(@"Object count at clock: %i", objects.count);
+//        NSArray *array = [NSArray arrayWithObjects:user.objectId, nil];
+//        PFUser *current = [PFUser currentUser];
+//        
+//        [current setObject:array forKey:@"friends"];
+//    }];
+    
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    self.navigationController.navigationBar.translucent = NO;
+    
     // Remove old place icons
     for (UIImageView *imgV in iconViews) {
         [imgV removeFromSuperview];
@@ -124,20 +141,9 @@
     settingsController.clockPlaces = clockPlaces;
     settingsController.myGeofences = myGeofences;
     settingsController.currentLocation = locationManager.location;
+    settingsController.friendIds = friendIds;
     settingsController.delegate = self;
     [self.navigationController pushViewController:settingsController animated:YES];
-}
-
-#pragma mark - SetingsViewController protocol method
-
-- (void)didUpdateGeofence:(GeofencePlace *)geofence changeType:(ChangeType)type {
-    if (type == deletedPlace || type == changedPlace) {
-        [locationManager stopMonitoringForRegion:geofence.fenceRegion];
-    }
-    if (type == newPlace || type == changedPlace) {
-        [locationManager startMonitoringForRegion:geofence.fenceRegion];
-    }
-    NSLog(@"Did update num monitored regions: %i", locationManager.monitoredRegions.count);
 }
 
 #pragma mark - Location manager methods
@@ -209,6 +215,18 @@
     [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) NSLog(@"Save succeeded");
     }];
+}
+
+#pragma mark - SetingsViewController protocol method
+
+- (void)didUpdateGeofence:(GeofencePlace *)geofence changeType:(ChangeType)type {
+    if (type == deletedPlace || type == changedPlace) {
+        [locationManager stopMonitoringForRegion:geofence.fenceRegion];
+    }
+    if (type == newPlace || type == changedPlace) {
+        [locationManager startMonitoringForRegion:geofence.fenceRegion];
+    }
+    NSLog(@"Did update num monitored regions: %i", locationManager.monitoredRegions.count);
 }
 
 @end

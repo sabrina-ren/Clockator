@@ -38,13 +38,24 @@
     [titleLabel setText:@"Find Friends"];
     self.navigationItem.titleView = titleLabel;
     
+    NSLog(@"user count: %i", userList.count);
+    [self updateView];
+//    NSArray *userObjects = [friendQuery findObjects];
+//    for (PFUser *user in userObjects) {
+//        [userList addObject:user[@"fbID"]];
+//        NSLog(@"%@", [userList lastObject]);
+//    }
+}
+
+- (void)preloadFriends {
+    NSLog(@"Load data");
     PFQuery *friendQuery = [PFUser query];
     [friendQuery whereKeyExists:@"fbID"];
     [friendQuery findObjectsInBackgroundWithBlock:^(NSArray *users, NSError *error) {
         if (!error) {
             NSLog(@"Successfully retrieved %d users", users.count);
             userList = [NSMutableArray arrayWithCapacity:users.count];
-
+            
             for (PFObject *user in users) {
                 NSLog(@"%@", user[@"fbID"]);
                 [userList addObject:user[@"fbID"]];
@@ -53,11 +64,6 @@
             NSLog(@"Error: %@ %@", error, [error userInfo]);
         }
     }];
-//    NSArray *userObjects = [friendQuery findObjects];
-//    for (PFUser *user in userObjects) {
-//        [userList addObject:user[@"fbID"]];
-//        NSLog(@"%@", [userList lastObject]);
-//    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -67,11 +73,14 @@
 }
 
 - (BOOL)friendPickerViewController:(FBFriendPickerViewController *)friendPicker shouldIncludeUser:(id<FBGraphUser>)user {
-    
+
     NSString *facebookId = user.id;
     NSLog(@"%@", facebookId);
     
-    if ([userList containsObject:facebookId]) return YES;
+    if ([userList containsObject:facebookId]) {
+        NSLog(@"include user");
+        return YES;
+    }
     return NO;
 
 }

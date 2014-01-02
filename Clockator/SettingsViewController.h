@@ -24,6 +24,7 @@ typedef enum {
 
 @interface SettingsViewController : UITableViewController <GeofenceControllerDelegate>
 
+@property (nonatomic) NSArray *friendIds;
 @property (nonatomic) CLLocation *currentLocation;
 @property (nonatomic) NSMutableArray *clockPlaces;
 @property (nonatomic) NSMutableArray *myGeofences;

@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol LoginControllerDelegate <NSObject>
+- (void)didLoginUserIsNew:(BOOL)isNew;
+@end
+
 @interface LoginViewController : UIViewController
+
+@property (nonatomic, weak) id <LoginControllerDelegate> delegate;
 
 @end

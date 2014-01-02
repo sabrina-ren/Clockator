@@ -11,4 +11,6 @@
 
 @interface FBFindFriendsController : FBFriendPickerViewController <FBFriendPickerDelegate>
 
+- (void)preloadFriends;
+
 @end

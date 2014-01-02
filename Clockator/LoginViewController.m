@@ -44,7 +44,6 @@
     [titleLabel setTextColor:[UIColor whiteColor]];
     [titleLabel setText:@"Clockator"];
     self.navigationItem.titleView = titleLabel;
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 
     
     _activityIndicator.hidesWhenStopped = YES;
@@ -60,7 +59,7 @@
 - (IBAction)loginButtonTouchHandler:(id)sender {
     [_activityIndicator startAnimating];
     // Permissions requested
-    NSArray *permissionsArray = @[@"user_about_me",@"user_relationships",@"user_location"];
+    NSArray *permissionsArray = @[@"user_about_me",@"user_relationships"];
     
     // Login PFUser with Facebook
     [PFFacebookUtils logInWithPermissions:permissionsArray block:^(PFUser *user, NSError *error){
@@ -74,10 +73,10 @@
             }
         } else if (user.isNew) {
             NSLog(@"User with Facebook signed up and logged in!");
-            [self.navigationController pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"UserInfoViewController"] animated:YES];
+            [self.delegate didLoginUserIsNew:YES];
         } else {
             NSLog(@"User with Facebook logged in!");
-             [self.navigationController pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"UserInfoViewController"] animated:YES];
+            [self.delegate didLoginUserIsNew:NO];
         }
         
     }];

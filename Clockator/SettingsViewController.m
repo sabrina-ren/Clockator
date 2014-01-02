@@ -7,7 +7,8 @@
 //
 
 #import "SettingsViewController.h"
-#import "FBFindFriendsController.h"
+//#import "FBFindFriendsController.h"
+#import "FindFriendsViewController.h"
 #import "PlaceIconViewController.h"
 #import "GeofencePlace.h"
 #import "Place.h"
@@ -44,9 +45,13 @@
 
     settingsNames = @[@"Find Friends", @"Clock Face"];
     
-    FBFindFriendsController *findFriendsController = [[FBFindFriendsController alloc] init];
-    [findFriendsController loadData];
+//    FBFindFriendsController *findFriendsController = [[FBFindFriendsController alloc] init];
+//    [findFriendsController preloadFriends];
+//    [findFriendsController loadData];
 
+    FindFriendsViewController *findFriendsController = [self.storyboard instantiateViewControllerWithIdentifier:@"FindFriendsViewController"];
+    findFriendsController.friendIds = self.friendIds;
+    
     PlaceIconViewController *clockFaceController = [self.storyboard instantiateViewControllerWithIdentifier:@"PlaceIconViewController"];
     clockFaceController.clockPlaces = clockPlaces;
     clockFaceController.isIconView = NO;
