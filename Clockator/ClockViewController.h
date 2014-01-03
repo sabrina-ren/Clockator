@@ -9,6 +9,7 @@
 #import "LoginViewController.h"
 #import "SettingsViewController.h"
 #import <Parse/Parse.h>
+#import "PopoverView.h"
 #import <UIKit/UIKit.h>
 
 @class ClockViewController;

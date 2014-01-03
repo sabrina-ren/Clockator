@@ -65,8 +65,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
-    // Return the number of rows in the section.
+    if (isIconView) return clockPlaces.count - 1;
     return clockPlaces.count;
 }
 

@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "AppKeys.h"
 #import "ClockViewController.h"
+#import "KeyConstants.h"
 #import "UIColor+customColours.h"
 #import <Parse/Parse.h>
 
@@ -27,8 +28,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
-    
     [Parse setApplicationId:parseApplicationId clientKey:parseClientKey];
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     [PFFacebookUtils initializeFacebook];
@@ -48,12 +47,18 @@
     loginController.delegate = self;
     
     if (!([PFUser currentUser] && [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]])) {
+        // New user
         [clockController presentViewController:loginController animated:NO completion:nil];
     }
     else {
+        // Signed in, refresh data
         [self refreshBasicFacebookData];
         [self refreshFacebookFriends];
+        [self checkForAcceptedFriends];
     };
+    
+    // Remote notifications
+//    [self handlePush:launchOptions];
     
     return YES;
 }
@@ -165,12 +170,80 @@
     }];
 }
 
+#pragma mark - Refresh Parse data
+
+- (void)checkForAcceptedFriends {
+    // Find accepted friend requests
+    PFQuery *query = [PFQuery queryWithClassName:CKFriendReqClass];
+    [query whereKey:CKFriendReqFromUserKey equalTo:[PFUser currentUser]];
+    [query whereKey:CKFriendReqStatusKey equalTo:@"accepted"];
+    [query includeKey:CKFriendReqToUserKey];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        NSMutableArray *friends = [[PFUser currentUser] objectForKey:CKUserFriendsKey];
+        if (!friends) friends = [[NSMutableArray alloc] init];
+        
+        for (PFObject *object in objects) {
+            // Add to friends array
+            PFUser *newFriend = [object objectForKey:CKFriendReqToUserKey];
+            [friends addObject:newFriend.objectId];
+            [[PFUser currentUser] setObject:friends forKey:CKUserFriendsKey];
+            
+            // Change status to added
+            [object setObject:@"added" forKey:CKFriendReqStatusKey];
+            [object saveEventually];
+        }
+        [[PFUser currentUser] saveEventually];
+    }];
+}
+
+#pragma mark - Remote Notifications
+
+//- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+//    [PFPush storeDeviceToken:deviceToken];
+//    [[PFInstallation currentInstallation] addUniqueObject:@"" forKey:CKInstallationChannelsKey];
+//    [[PFInstallation currentInstallation] saveEventually];
+//    
+//    
+//    if ([PFUser currentUser]) {
+//        NSString *privateChannelName = [[PFUser currentUser] objectForKey:CKUserPrivateChannelKey];
+//        if (privateChannelName && privateChannelName.length > 0) {
+//            NSLog(@"Subscribing user to %@", privateChannelName);
+//            [[PFInstallation currentInstallation] addUniqueObject:privateChannelName forKey:CKInstallationChannelsKey];
+//        }
+//    }
+//    [[PFInstallation currentInstallation] saveEventually];
+//}
+//
+//- (void)handlePush:(NSDictionary *)launchOptions {
+//    NSDictionary *payload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+//    if (payload && [PFUser currentUser]) {
+//        PFUser *fromFriend = [payload objectForKey:CKPayloadFromUserKey];
+//        NSString *type = [payload objectForKey:CKPayloadTypeKey];
+//        if ([type isEqualToString:@"accepted"]) {
+//            // Add to own friends list
+//            NSMutableArray *friends = [[PFUser currentUser] objectForKey:CKUserFriendsKey];
+//            if (!friends || friends.count == 0) friends = [[NSMutableArray alloc] init];
+//            [friends addObject:fromFriend.objectId];
+//            [[PFUser currentUser] setObject:friends forKey:CKUserFriendsKey];
+//        }
+//    }
+//}
+
 #pragma mark - LoginViewController protocol method
 
 - (void)didLoginUserIsNew:(BOOL)isNew {
     [clockController dismissViewControllerAnimated:YES completion:nil];
     [self refreshBasicFacebookData];
     [self refreshFacebookFriends];
+    [self checkForAcceptedFriends];
+    
+    // Subscribe to private push channel
+//    if ([PFUser currentUser]) {
+//        NSString *privateChannelName = [NSString stringWithFormat:@"user_%@", [PFUser currentUser].objectId];
+//        [[PFInstallation currentInstallation] setObject:[PFUser currentUser] forKey:CKInstallationUserKey];
+//        [[PFInstallation currentInstallation] saveEventually];
+//        [[PFUser currentUser] setObject:privateChannelName forKey:CKUserPrivateChannelKey];
+//    }
 }
 
 @end

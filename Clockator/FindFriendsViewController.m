@@ -7,6 +7,7 @@
 //
 
 #import "FindFriendsViewController.h"
+#import "KeyConstants.h"
 
 @interface FindFriendsViewController ()
 
@@ -44,7 +45,6 @@
 }
 
 - (PFQuery *)queryForTable {
-    NSLog(@"query for table");
     PFQuery *friendQuery = [PFUser query];
     
     // Use cached data if none loaded
@@ -57,6 +57,7 @@
 #pragma mark - Table view
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object {
+//    NSLog(@"Cell for row at index");
 
     PFTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
     if (!cell) {
@@ -67,7 +68,6 @@
     
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.textLabel.text = user[@"displayName"];
-    NSLog(@"name: %@", user[@"displayName"]);
     
     // Set picture
     NSData *imageData = user[@"profilePicture"];
@@ -80,7 +80,6 @@
     cell.imageView.contentMode = UIViewContentModeScaleAspectFit;
     
     NSString *friendType = [self friendTypeForSection:indexPath.section];
-    NSLog(@"\n\nFriend type: %@", friendType);
 
     if (![friendType isEqualToString:@"Friends"]) {
         // Set button
@@ -128,12 +127,11 @@
     [self.sections removeAllObjects]; // Index of all objects in sections
     [self.sectionToFriendTypeMap removeAllObjects];
     
-//    friends = [[NSMutableArray alloc] init];
-//    friends = [NSMutableArray arrayWithArray:[PFUser currentUser][@"friends"]];
+    
+
 //
 //    NSLog(@"friends count:%i", friends.count);
-//    
-    NSLog(@"querying friend types");
+//
     
     friendRequesters = [[NSMutableArray alloc] init]; // Users
     friendRequestObjects = [[NSMutableArray alloc] init]; // FriendRequest objects
@@ -152,9 +150,12 @@
         NSLog(@"requested friend count: %i", objects.count);
 
         // Get list of friends
-        friends = [[NSMutableArray alloc] init];
-        friends = [NSMutableArray arrayWithArray:[PFUser currentUser][@"friends"]];
-        NSLog(@"friends count:%i", friends.count);
+        friends = [[PFUser currentUser] objectForKey:CKUserFriendsKey];
+        if (!friends) {
+            NSLog(@"No friends array");
+            friends = [[NSMutableArray alloc] init];
+        }
+        NSLog(@"Friends count:%i", friends.count);
         
         NSInteger requestSectionExists = 0;
         NSInteger friendsSectionExists = 0;
@@ -164,7 +165,6 @@
         NSInteger section;
         NSInteger rowIndex = 0;
         for (PFObject *object in self.objects) {
-            NSLog(@"Object number: %i id: %@", rowIndex, object.objectId);
             NSString *friendType;
             if ([friendRequesters containsObject:object.objectId]) {
                 friendType = @"Requests";
@@ -178,7 +178,6 @@
                 friendType = @"None";
                 section = requestSectionExists + friendsSectionExists;
             }
-            NSLog(@"Friend type: %@", friendType);
             NSMutableArray *objectsInSection = [sections objectForKey:friendType];
             if (!objectsInSection) {
                 objectsInSection = [NSMutableArray array]; // New section
@@ -186,14 +185,13 @@
             }
             [objectsInSection addObject:[NSNumber numberWithInt:rowIndex++]];
             [sections setObject:objectsInSection forKey:friendType];
-            NSLog(@"Objects num: %i in section: %i for type:%@\n", objectsInSection.count, section, friendType);
+//            NSLog(@"Objects num: %i in section: %i for type:%@", objectsInSection.count, section, friendType);
         }
         [self.tableView reloadData];
     }];
 }
 
 - (PFObject *)objectAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"Object at indexpath\n\n");
     NSString *friendType = [self friendTypeForSection:indexPath.section];
     NSArray *rowIndicesInSection = [sections objectForKey:friendType];
     NSNumber *rowIndex = [rowIndicesInSection objectAtIndex:indexPath.row];
@@ -202,7 +200,7 @@
 
 #pragma mark - UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    NSLog(@"number of sections: %i", sections.allKeys.count);
+    NSLog(@"Number of sections: %i", sections.allKeys.count);
     return sections.allKeys.count;
 }
 
@@ -223,29 +221,65 @@
 - (void)shouldAcceptFriend:(id)sender {
     UIButton *button = (UIButton *)sender;
     [button setSelected:YES];
-    NSInteger index = button.tag;
-    PFObject *friendRequest = friendRequestObjects[index];
-    [friendRequest setObject:@"accepted" forKey:@"status"];
-    [friends addObject:friendRequesters[index]];
-    [[PFUser currentUser] setObject:friends forKey:@"friends"];
     
-    [friendRequest saveEventually];
-    [[PFUser currentUser] saveEventually];
+    NSInteger buttonIndex = button.tag;
+    NSArray *rowIndicesInSection = [sections objectForKey:@"Requests"];
+    int index = [[rowIndicesInSection objectAtIndex:buttonIndex] intValue];
+    PFUser *newFriend = (PFUser *) self.objects[index];
     
-    [friendRequestObjects removeObjectAtIndex:index];
-    [friendRequesters removeObjectAtIndex:index];
+    NSLog(@"Accept friend: %@", newFriend[CKUserDisplayNameKey]);
 
-    [self loadObjects];
-    [self.tableView reloadData];
-    // Need to send notification for user to also add to friends list
+    PFObject *friendRequest;
+    int requestIndex = 0;
+    for (PFObject *request in friendRequestObjects) {
+        PFUser *fromUser = [request objectForKey:CKFriendReqFromUserKey];
+        if ([newFriend.objectId isEqualToString:fromUser.objectId]) {
+            friendRequest = request;
+            break;
+        }
+        requestIndex++;
+    }
+    NSLog(@"Accept request: %@", friendRequest.objectId);
+    [friendRequestObjects removeObject:friendRequest];
+    [friendRequesters removeObject:newFriend];
+    
+    [friendRequest setObject:@"accepted" forKey:CKFriendReqStatusKey];
+    [friendRequest saveEventually];
+
+    [friends addObject:newFriend.objectId];
+    [[PFUser currentUser] setObject:friends forKey:CKUserFriendsKey];
+    [[PFUser currentUser] saveEventually:^(BOOL succeeded, NSError *error) {
+        
+        // Remote notification
+//        NSString *privateChannelName = [newFriend objectForKey:CKUserPrivateChannelKey];
+//        if (privateChannelName && privateChannelName.length > 0) {
+//            NSString *userName = [[PFUser currentUser] objectForKey:CKUserDisplayNameKey];
+//            NSString *message = [NSString stringWithFormat:@"%@ accepted your friend request", userName];
+//            NSDictionary *payload = [NSDictionary dictionaryWithObjectsAndKeys:message, CKAPNSAlertKey, @"accepted", CKPayloadTypeKey, [PFUser currentUser].objectId, CKPayloadFromUserKey, nil];
+//            
+//            PFPush *push = [[PFPush alloc] init];
+//            [push setChannel:privateChannelName];
+//            [push setData:payload];
+//            [push sendPushInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+//                NSLog(@"Remote push notification succeeded: %i", succeeded);
+//                if (error) NSLog(@"Error: %@", error);
+//            }];
+//        }
+        
+        [self loadObjects];
+        [self.tableView reloadData];
+    }];
 }
 
 - (void)shouldToggleFriendButton:(id)sender {
     UIButton *button = (UIButton *)sender;
     [button setSelected:!button.selected];
     
-    NSInteger index = ((UIButton *) sender).tag;
+    NSInteger buttonIndex = button.tag;
+    NSArray *rowIndicesInSection = [sections objectForKey:@"None"];
+    int index = [[rowIndicesInSection objectAtIndex:buttonIndex] intValue];
     PFUser *user = (PFUser *) self.objects[index];
+
     NSLog(@"name: %@", user[@"displayName"]);
     
     CABasicAnimation *rotation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
@@ -259,23 +293,26 @@
         NSLog(@"Unfollow");
         rotation.fromValue = angle;
         rotation.toValue = [NSNumber numberWithFloat:0];
+        [self cancelFriendRequestTo:user];
     }
     else {
         NSLog(@"Follow");
         rotation.toValue = angle;
+        [self sendFriendRequestTo:user block:^(BOOL succeeded, NSError *error) {
+            NSLog(@"Send friend request succeeded: %i", succeeded);
+            if (error)NSLog(@"Send friend request error: %@", error);
+        }];
     }
     [button.layer setAnchorPoint:CGPointMake(0.5, 0.5)];
     [button.layer addAnimation:rotation forKey:@"rotation"];
-    
 }
 
 - (void)sendFriendRequestTo:(PFUser *)user block:(void(^)(BOOL succeeded, NSError *error))completionBlock {
-    
-    PFObject *friendRequest = [PFObject objectWithClassName:@"FriendRequest"];
-    [friendRequest setObject:[PFUser currentUser] forKey:@"fromUser"];
-    [friendRequest setObject:user forKey:@"toUser"];
-    [friendRequest setObject:@"pending" forKey:@"status"];
-    
+    PFObject *friendRequest = [PFObject objectWithClassName:CKFriendReqClass];
+    [friendRequest setObject:[PFUser currentUser] forKey:CKFriendReqFromUserKey];
+    [friendRequest setObject:user forKey:CKFriendReqToUserKey];
+    [friendRequest setObject:@"pending" forKey:CKFriendReqStatusKey];
+
     PFACL *acl = [PFACL ACL];
     [acl setPublicReadAccess:YES];
     [acl setPublicWriteAccess:NO];
@@ -283,7 +320,22 @@
     [acl setWriteAccess:YES forUser:[PFUser currentUser]];
     
     friendRequest.ACL = acl;
-    [friendRequest saveEventually];
+    [friendRequest saveEventually:completionBlock];
+}
+
+- (void)cancelFriendRequestTo:(PFUser *)user {
+    PFQuery *pendingQuery = [PFQuery queryWithClassName:CKFriendReqClass];
+    [pendingQuery whereKey:CKFriendReqFromUserKey equalTo:[PFUser currentUser]];
+    [pendingQuery whereKey:CKFriendReqToUserKey equalTo:user];
+    [pendingQuery whereKey:@"status" equalTo:@"pending"];
+    [pendingQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {
+            for (PFObject *object in objects)  {
+                [object deleteEventually];
+            }
+        }
+        else NSLog(@"Cancel request error: %@", error);
+    }];
 }
 
 @end

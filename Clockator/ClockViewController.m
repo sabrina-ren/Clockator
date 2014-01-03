@@ -8,12 +8,19 @@
 
 #import "ClockViewController.h"
 #import "FBFindFriendsController.h"
-#import "LoginViewController.h"
-#import "SettingsViewController.h"
+#import "CKFriend.h"
 #import "GeofencePlace.h"
+#import "KeyConstants.h"
+#import "LoginViewController.h"
 #import "Place.h"
+#import "SettingsViewController.h"
+#import <QuartzCore/QuartzCore.h>
+
 
 @interface ClockViewController ()
+@property (nonatomic) NSMutableArray *friendsAtLocation;
+@property (nonatomic) NSMutableArray *friendViews;
+
 @property (nonatomic) NSMutableArray *clockPlaces;
 @property (nonatomic) NSMutableArray *iconViews;
 @property (nonatomic) NSMutableArray *myGeofences;
@@ -22,14 +29,17 @@
 
 @property (nonatomic) CLLocation *currentLocation;
 @property (nonatomic) CLLocationManager *locationManager;
+@property NSInteger numShownPlaces;
 @property BOOL didStartMonitoringRegion;
 @property BOOL withinGeofences;
+
 @end
 
 @implementation ClockViewController
+@synthesize friendsAtLocation, friendViews;
 @synthesize clockPlaces, iconViews, myGeofences, hands, settingsController;
 @synthesize friendIds;
-@synthesize currentLocation, locationManager;
+@synthesize currentLocation, locationManager, numShownPlaces;
 
 - (void)viewDidLoad
 {
@@ -51,7 +61,8 @@
     // Get default clock places
     clockPlaces = [Place getDefaultPlaces];
 
-    [self loadShownClockPlaces];
+//    [self loadShownClockPlaces];
+//    [self loadFriends];
     
     NSLog(@"finished loading");
 //    if (FBSession.activeSession.state == FBSessionStateCreatedTokenLoaded) {
@@ -75,29 +86,22 @@
     }
     
     [self monitorRegions];
-    
-//    PFQuery *query = [PFUser query];
-//    [query whereKey:@"displayName" equalTo:@"Sandra Amgdbgfgabbi Smithberg"];
-//    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-//        PFUser *user = [objects firstObject];
-//        NSLog(@"Object count at clock: %i", objects.count);
-//        NSArray *array = [NSArray arrayWithObjects:user.objectId, nil];
-//        PFUser *current = [PFUser currentUser];
-//        
-//        [current setObject:array forKey:@"friends"];
-//    }];
-    
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     self.navigationController.navigationBar.translucent = NO;
     
     // Remove old place icons
-    for (UIImageView *imgV in iconViews) {
-        [imgV removeFromSuperview];
+    for (UIImageView *imageView in iconViews) {
+        [imageView removeFromSuperview];
     }
+    // Remove old friend images
+    for (UIImageView *imageView in friendViews) {
+        [imageView removeFromSuperview];
+    }
+    
     [self loadShownClockPlaces];
+    [self loadFriends];
 }
 
 - (void)didReceiveMemoryWarning
@@ -112,7 +116,7 @@
     iconViews = [NSMutableArray arrayWithCapacity:clockPlaces.count];
     hands = [[NSMutableArray alloc] init];
     
-    NSInteger numShownPlaces = 0;
+    numShownPlaces = 0;
     for (Place *thisPlace in clockPlaces) {
         if (thisPlace.isShown) numShownPlaces++;
     }
@@ -144,6 +148,100 @@
     settingsController.friendIds = friendIds;
     settingsController.delegate = self;
     [self.navigationController pushViewController:settingsController animated:YES];
+}
+
+#pragma mark - Friends data
+
+- (void)loadFriends {
+    friendViews = [[NSMutableArray alloc] init];
+    
+    NSLog(@"Loading friends");
+    NSArray *friendsIdList = [[PFUser currentUser] objectForKey:CKUserFriendsKey];
+    NSMutableArray *friends = [[NSMutableArray alloc] init];
+    
+    PFQuery *query = [PFUser query];
+    [query whereKey:CKUserObjectId containedIn:friendsIdList];
+     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+         if (!error) {
+             for (PFUser *user in objects) {
+             [friends addObject:user];
+             }
+             [self loadLocationsForFriends:friends];
+         }
+     }];
+}
+
+- (void)loadLocationsForFriends:(NSMutableArray *)friends {
+    friendsAtLocation = [[NSMutableArray alloc] init];
+    for (int i=0; i<clockPlaces.count; i++) {
+        [friendsAtLocation addObject:[[NSMutableArray alloc] init]];
+    }
+    
+    for (PFUser *friendUser in friends) {
+        CKFriend *friend = [[CKFriend alloc] init];
+        friend.displayName = [friendUser objectForKey:CKUserDisplayNameKey];
+        friend.location = [friendUser objectForKey:CKUserLocationKey];
+        friend.profile = [UIImage imageWithData:[friendUser objectForKey:CKUserProfileKey]];
+        friend.iconIndex = [[friendUser objectForKey:CKUserIconKey] intValue];
+        
+        // Sort friends by icon
+        NSMutableArray *friendsAtIndex = friendsAtLocation[friend.iconIndex];
+        [friendsAtIndex addObject:friend];
+    }
+
+    double locationAngle = 2*M_PI/numShownPlaces;
+    
+    int angleIndex = 0; // Tracks index of shown places not all clock places
+    
+    for (int i=0; i<clockPlaces.count; i++) {
+        if (![clockPlaces[i] isShown]) continue;
+        
+        CKFriend *locatedFriend;
+        if ([friendsAtLocation[i] count] > 0) {
+            NSArray *friendsHere = friendsAtLocation[i];
+            int numFriends = friendsHere.count;
+            double offsetAngle = locationAngle/4;
+            double offsetRadius = 10;
+            
+            double angle = - offsetAngle * numFriends/2 + offsetAngle * 0.5;
+            
+            for (int j=0; j<numFriends; j++) {
+                locatedFriend = friendsHere[j];
+                
+                CGFloat radius =  80 - (j%2)*offsetRadius;
+                
+                CGFloat x = 140 + radius*cos(locationAngle*angleIndex + M_PI/2 + angle);
+                CGFloat y = 200 - radius*sin(locationAngle*angleIndex + M_PI/2 + angle);
+                angle += offsetAngle;
+                
+                UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+                [button setImage:locatedFriend.profile forState:UIControlStateNormal];
+                [button addTarget:self action:@selector(friendButtonTouchHandler:) forControlEvents:UIControlEventTouchUpInside];
+                button.tag = (i+1)*100 + j; // Num friends will not exceed 99
+                button.frame = CGRectMake(x, y, 50, 50);
+                button.clipsToBounds = YES;
+                button.layer.cornerRadius = 25;
+                
+                [self.view addSubview:button];
+                [friendViews addObject:button];
+            }
+        }
+        angleIndex++;
+    }
+
+}
+- (void)friendButtonTouchHandler:(id)sender {
+    UIButton *button = (UIButton *)sender;
+    
+    NSString *indexString = [NSString stringWithFormat:@"%i", button.tag];
+    NSInteger friendIndex = [[indexString substringFromIndex:indexString.length - 2] integerValue];
+    NSInteger locationIndex = (button.tag - friendIndex)/100 - 1;
+    [[button superview] bringSubviewToFront:button];
+    
+    CKFriend *locatedFriend = [friendsAtLocation[locationIndex] objectAtIndex:friendIndex];
+    CGPoint point = CGPointMake(button.frame.origin.x + 25, button.frame.origin.y - 5);
+    NSString *text = [NSString stringWithFormat:@"%@\n%@", locatedFriend.displayName, locatedFriend.location];
+    PopoverView *detailView = [PopoverView showPopoverAtPoint:point inView:self.view withText:text delegate:nil];
 }
 
 #pragma mark - Location manager methods
