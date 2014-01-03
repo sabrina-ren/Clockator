@@ -6,8 +6,9 @@
 //  Copyright (c) 2013 Sabrina Ren. All rights reserved.
 //
 #import "GeofenceViewController.h"
+#import "AppDelegate.h"
 #import "PlaceIconViewController.h"
-#import "GeofencePlace.h"
+#import "Geofence.h"
 #import "Place.h"
 #import "UIColor+customColours.h"
 #import <CoreLocation/CoreLocation.h>
@@ -23,6 +24,8 @@
 
 - (IBAction)chooseIcon:(id)sender;
 - (IBAction)sliderChanged:(id)sender;
+
+@property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 
 @property (nonatomic) CLPlacemark *placemark;
 @property (nonatomic) MKLocalSearchResponse *searchResults;
@@ -49,6 +52,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    AppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
+    self.managedObjectContext = appDelegate.managedObjectContext;
     
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneButtonActionHandler:)];
     self.navigationItem.rightBarButtonItem = doneButton;
@@ -131,16 +137,16 @@
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (alertView.tag == 0) [placesSearchBar becomeFirstResponder];
-    else [nameField becomeFirstResponder];
+    else if (alertView.tag == 1) [nameField becomeFirstResponder];
 }
 
 - (void)doneButtonActionHandler:(id)sender {
     NSString *iden = [NSString stringWithFormat:@"%i%@", self.iconIndex, nameField.text];
     CLCircularRegion *region = [[CLCircularRegion alloc] initWithCenter:coords radius:self.radius identifier:iden];
     if (placemark) {
-        BOOL isNew = TRUE;
+        BOOL isNew = YES;
         if (geoPlace) isNew = NO;
-        else geoPlace = [[GeofencePlace alloc] init];
+        else geoPlace = [NSEntityDescription insertNewObjectForEntityForName:@"Geofence" inManagedObjectContext:self.managedObjectContext];
         
         geoPlace.fenceRegion = region;
         geoPlace.fencePlacemark = placemark;
@@ -289,6 +295,7 @@
     NSLog(@"Did select: Map items count: %i", searchResults.mapItems.count);
 
     if (self.displayCurrent && indexPath.row==0) {
+        if (currentLocation) {
         [placesSearchBar setText:@"Current location"];
         [self.activityIndicator startAnimating];
         CLGeocoder * geoCoder = [[CLGeocoder alloc] init];
@@ -303,6 +310,8 @@
                 [self showMap];
             }
         }];
+        }
+        else [self showAlertWithTitle:@"Could not find location" fieldTag:-1];
     }
     else {
         if (indexPath.row < searchResults.mapItems.count) {

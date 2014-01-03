@@ -15,6 +15,7 @@ NSString *const CKUserFriendsKey = @"friends";
 NSString *const CKUserLocationKey = @"location";
 NSString *const CKUserIconKey = @"iconIndex";
 NSString *const CKUserProfileKey = @"profilePicture";
+NSString *const CKUserUpdateDateKey = @"updateDate";
 
 #pragma  mark - PFObject FriendRequest class
 NSString *const CKFriendReqClass = @"FriendRequest";

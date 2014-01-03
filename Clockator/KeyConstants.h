@@ -13,6 +13,7 @@ extern NSString *const CKUserFriendsKey;
 extern NSString *const CKUserLocationKey;
 extern NSString *const CKUserIconKey;
 extern NSString *const CKUserProfileKey;
+extern NSString *const CKUserUpdateDateKey;
 
 #pragma  mark - PFObject FriendRequest class
 extern NSString *const CKFriendReqClass;

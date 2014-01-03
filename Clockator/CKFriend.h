@@ -13,6 +13,9 @@
 @property (nonatomic) NSString *displayName;
 @property (nonatomic) NSString *location;
 @property (nonatomic) UIImage *profile;
+@property (nonatomic) NSDate *updatedAt;
 @property NSInteger iconIndex;
+
+- (NSString *)locationUpdatedAt;
 
 @end

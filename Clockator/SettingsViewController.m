@@ -10,7 +10,7 @@
 //#import "FBFindFriendsController.h"
 #import "FindFriendsViewController.h"
 #import "PlaceIconViewController.h"
-#import "GeofencePlace.h"
+#import "Geofence.h"
 #import "Place.h"
 #import "UIColor+customColours.h"
 
@@ -18,12 +18,12 @@
 @property (nonatomic) GeofenceViewController *geofenceController;
 @property (nonatomic) NSArray *settingsNames;
 @property (nonatomic) NSArray *settingsControllers;
-@property (nonatomic) NSInteger selectedRow;
+@property (nonatomic) NSIndexPath *selectedIndex;
 @end
 
 @implementation SettingsViewController
-@synthesize clockPlaces, myGeofences;
-@synthesize geofenceController, settingsNames, settingsControllers;
+@synthesize clockPlaces, geofences;
+@synthesize geofenceController, settingsNames, settingsControllers, selectedIndex;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -59,6 +59,11 @@
     settingsControllers = [NSArray arrayWithObjects:findFriendsController, clockFaceController, nil];
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:selectedIndex];
+    [cell setHighlighted:NO];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -78,7 +83,7 @@
 #warning Incomplete method implementation.
     // Return the number of rows in the section.
     if (section == 0) return settingsNames.count;
-    else if (section ==1) return myGeofences.count + 1;
+    else if (section ==1) return geofences.count + 1;
     return -1;
 }
 
@@ -92,7 +97,7 @@
         cell.textLabel.text = title;
     }
     else if (indexPath.section == 1) {
-        if (indexPath.row == myGeofences.count) {
+        if (indexPath.row == geofences.count) {
             // Last row is to add a new place
             cell = [tableView dequeueReusableCellWithIdentifier:@"AddCell"];
             cell.textLabel.text = @"+";
@@ -101,9 +106,9 @@
             [cell.textLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:25.0]];
         } else {
             cell = [tableView dequeueReusableCellWithIdentifier:@"SubtitleCell"];
-            NSString *title = [myGeofences[indexPath.row] fenceName];
+            NSString *title = [geofences[indexPath.row] fenceName];
             cell.textLabel.text = title;
-            cell.detailTextLabel.text = [myGeofences[indexPath.row] fenceAddress];
+            cell.detailTextLabel.text = [geofences[indexPath.row] fenceAddress];
         }
     }
     return cell;
@@ -113,15 +118,15 @@
     if (indexPath.section == 0) {
         [self.navigationController pushViewController:settingsControllers[indexPath.row] animated:YES];
     } else {
-        self.selectedRow = indexPath.row;
+        selectedIndex = indexPath;
          geofenceController = [self.storyboard instantiateViewControllerWithIdentifier:@"GeofenceViewController"];
         geofenceController.clockPlaces = clockPlaces;
         geofenceController.currentLocation = self.currentLocation;
         geofenceController.delegate = self;
 
         // If new place
-        if (myGeofences.count == indexPath.row) geofenceController.geoPlace = nil;
-        else geofenceController.geoPlace = myGeofences[indexPath.row];
+        if (geofences.count == indexPath.row) geofenceController.geoPlace = nil;
+        else geofenceController.geoPlace = geofences[indexPath.row];
   
         [self.navigationController pushViewController:geofenceController animated:YES];
     }
@@ -136,7 +141,7 @@
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Second section is editable
-    if (indexPath.section == 1 && indexPath.row != myGeofences.count) return YES;
+    if (indexPath.section == 1 && indexPath.row != geofences.count) return YES;
     return NO;
 }
 
@@ -146,9 +151,8 @@
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
-        [self.delegate didUpdateGeofence:myGeofences[indexPath.row] changeType:deletedPlace];
-        [myGeofences removeObjectAtIndex:indexPath.row];
-
+        [self.delegate didUpdateGeofence:geofences[indexPath.row] changeType:deletedPlace];
+        [geofences removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
@@ -165,23 +169,23 @@
 
 #pragma mark - MyPlaceViewController protocol method
 
-- (void)geofenceViewController:(GeofenceViewController *)controller didUpdateGeofence:(GeofencePlace *)geofence isNew:(BOOL)isNew {
+- (void)geofenceViewController:(GeofenceViewController *)controller didUpdateGeofence:(Geofence *)geofence isNew:(BOOL)isNew {
     if (isNew){
-        [myGeofences addObject:geofence];
+        [geofences addObject:geofence];
         [self.delegate didUpdateGeofence:geofence changeType:newPlace];
     }
     else {
-        myGeofences[self.selectedRow] = geofence;
+        geofences[selectedIndex.row] = geofence;
         [self.delegate didUpdateGeofence:geofence changeType:changedPlace];
     }
     [self.tableView reloadData];
     
     if (isNew) {
-        NSIndexPath *path = [NSIndexPath indexPathForRow:self.selectedRow inSection:1];
-        NSArray *indexPaths = [NSArray arrayWithObject:path];
+//        NSIndexPath *path = [NSIndexPath indexPathForRow:selectedIndex.row inSection:1];
+        NSArray *indexPaths = [NSArray arrayWithObject:selectedIndex];
         [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationLeft];
     }
-    for (GeofencePlace *place in myGeofences) {
+    for (Geofence *place in geofences) {
         NSLog(@"Geofences %@", place.fenceName);
     }
     

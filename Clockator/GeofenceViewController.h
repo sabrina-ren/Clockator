@@ -11,17 +11,17 @@
 #import <UIKit/UIKit.h>
 
 @class GeofenceViewController;
-@class GeofencePlace;
+@class Geofence;
 
 @protocol GeofenceControllerDelegate <NSObject>
-- (void)geofenceViewController:(GeofenceViewController *)controller didUpdateGeofence:(GeofencePlace *)geofence isNew:(BOOL)isNew;
+- (void)geofenceViewController:(GeofenceViewController *)controller didUpdateGeofence:(Geofence *)geofence isNew:(BOOL)isNew;
 @end
 
 @interface GeofenceViewController : UIViewController <MKMapViewDelegate,UIAlertViewDelegate, UISearchBarDelegate, UITableViewDelegate, UITextFieldDelegate,  PlaceIconControllerDelegate>
 
 @property (nonatomic) NSMutableArray *clockPlaces;
 @property (nonatomic) CLLocation *currentLocation;
-@property (nonatomic) GeofencePlace *geoPlace;
+@property (nonatomic) Geofence *geoPlace;
 @property (nonatomic, weak) id <GeofenceControllerDelegate> delegate;
 
 @end
