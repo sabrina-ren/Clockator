@@ -10,4 +10,6 @@
 
 @interface FindFriendsViewController : PFQueryTableViewController
 
+@property (nonatomic) NSArray *friendIds;
+
 @end

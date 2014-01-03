@@ -53,6 +53,7 @@
             NSString *name = userData[@"name"];
             
             [[PFUser currentUser] setObject:facebookID forKey:@"fbID"];
+            [[PFUser currentUser] setObject:name forKey:@"displayName"];
             [[PFUser currentUser] saveInBackground];
             
             userNameLabel.text = name;

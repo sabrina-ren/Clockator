@@ -6,19 +6,16 @@
 //  Copyright (c) 2013 Sabrina Ren. All rights reserved.
 //
 
+#import "LoginViewController.h"
 #import <UIKit/UIKit.h>
 #import <sqlite3.h>
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate, NSURLConnectionDelegate, LoginControllerDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 
-@property (nonatomic) NSString *databaseName;
-@property (nonatomic) NSString *databasePath;
-@property (nonatomic, retain) NSMutableArray *locations;
-@property (nonatomic, retain) NSMutableArray *friends;
-@property (nonatomic, retain) NSMutableArray *friendsAtLocation;
--(void) copyDatabaseIfNeeded;
--(NSString*) getDBPath;
+@property (nonatomic, retain, readonly) NSManagedObjectModel *managedObjectModel;
+@property (nonatomic, retain, readonly) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
 @end

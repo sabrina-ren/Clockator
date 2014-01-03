@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 
 @class SettingsViewController;
-@class GeofencePlace;
+@class Geofence;
 
 typedef enum {
     newPlace,
@@ -19,14 +19,15 @@ typedef enum {
 } ChangeType;
 
 @protocol SettingsControllerDelegate <NSObject>
-- (void)didUpdateGeofence:(GeofencePlace *)geofence changeType:(ChangeType)type;
+- (void)didUpdateGeofence:(Geofence *)geofence changeType:(ChangeType)type;
 @end
 
 @interface SettingsViewController : UITableViewController <GeofenceControllerDelegate>
 
+@property (nonatomic) NSArray *friendIds;
 @property (nonatomic) CLLocation *currentLocation;
 @property (nonatomic) NSMutableArray *clockPlaces;
-@property (nonatomic) NSMutableArray *myGeofences;
+@property (nonatomic) NSMutableArray *geofences;
 
 @property (nonatomic, weak) id <SettingsControllerDelegate> delegate;
 

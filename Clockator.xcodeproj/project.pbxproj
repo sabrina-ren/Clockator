@@ -19,7 +19,6 @@
 		2917E95E18697D7600A46AD7 /* PlaceIconViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2917E95D18697D7600A46AD7 /* PlaceIconViewController.m */; };
 		2917E961186A2F2000A46AD7 /* UIColor+customColours.m in Sources */ = {isa = PBXBuildFile; fileRef = 2917E960186A2F2000A46AD7 /* UIColor+customColours.m */; };
 		2917E965186AEA8F00A46AD7 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2917E964186AEA8F00A46AD7 /* MapKit.framework */; };
-		293FD5D4186B93C000F2CB61 /* GeofencePlace.m in Sources */ = {isa = PBXBuildFile; fileRef = 293FD5D3186B93C000F2CB61 /* GeofencePlace.m */; };
 		293FD5D6186B97C300F2CB61 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 293FD5D5186B97C300F2CB61 /* AddressBookUI.framework */; };
 		293FD5DF186D585300F2CB61 /* AppKeys.m in Sources */ = {isa = PBXBuildFile; fileRef = 293FD5DE186D585300F2CB61 /* AppKeys.m */; };
 		293FD5E4186EB2E900F2CB61 /* CurrentLocation.png in Resources */ = {isa = PBXBuildFile; fileRef = 293FD5E3186EB2E900F2CB61 /* CurrentLocation.png */; };
@@ -38,10 +37,8 @@
 		298312371840480A00F62170 /* ClockatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 298312361840480A00F62170 /* ClockatorTests.m */; };
 		2983124A18404F5200F62170 /* Channel_Slanted1.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2983124918404F5200F62170 /* Channel_Slanted1.ttf */; };
 		2983124B18404F8800F62170 /* Channel_Slanted1.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2983124918404F5200F62170 /* Channel_Slanted1.ttf */; };
-		2983125018405A3B00F62170 /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 2983124F18405A3B00F62170 /* Location.m */; };
 		2983125218405B4D00F62170 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983125118405B4D00F62170 /* libsqlite3.0.dylib */; };
 		2983125418405D7C00F62170 /* Clockator.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 2983125318405D7C00F62170 /* Clockator.sqlite */; };
-		2983125B1840667F00F62170 /* Friend.m in Sources */ = {isa = PBXBuildFile; fileRef = 2983125A1840667F00F62170 /* Friend.m */; };
 		2983125E1840820000F62170 /* circle.png in Resources */ = {isa = PBXBuildFile; fileRef = 2983125C1840820000F62170 /* circle.png */; };
 		2983125F1840820000F62170 /* hand.png in Resources */ = {isa = PBXBuildFile; fileRef = 2983125D1840820000F62170 /* hand.png */; };
 		298312611843210900F62170 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 298312601843210900F62170 /* Parse.framework */; };
@@ -59,6 +56,16 @@
 		29921BCB18662B1600443362 /* FBFindFriendsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29921BCA18662B1600443362 /* FBFindFriendsController.m */; };
 		29B8F34918717A690066950A /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B8F34818717A690066950A /* LoginViewController.m */; };
 		29B8F34C18717A7C0066950A /* UserInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B8F34B18717A7C0066950A /* UserInfoViewController.m */; };
+		29B8F34F1874B0EB0066950A /* FindFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B8F34E1874B0EA0066950A /* FindFriendsViewController.m */; };
+		29B8F353187523510066950A /* Add.png in Resources */ = {isa = PBXBuildFile; fileRef = 29B8F352187523510066950A /* Add.png */; };
+		29B8F355187536040066950A /* AddSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = 29B8F354187536040066950A /* AddSelected.png */; };
+		29B8F35B1875FCB90066950A /* KeyConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B8F35A1875FCB90066950A /* KeyConstants.m */; };
+		29B8F35E1876432F0066950A /* CKFriend.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B8F35D1876432F0066950A /* CKFriend.m */; };
+		29B8F363187666FC0066950A /* PopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B8F361187666FC0066950A /* PopoverView.m */; };
+		29B8F366187696B60066950A /* ClockHand.png in Resources */ = {isa = PBXBuildFile; fileRef = 29B8F365187696B60066950A /* ClockHand.png */; };
+		29B8F3681876B90A0066950A /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B8F3671876B90A0066950A /* CoreData.framework */; };
+		29B8F36B1876B9BC0066950A /* Clockator.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 29B8F3691876B9BC0066950A /* Clockator.xcdatamodeld */; };
+		29B8F36E1876C6680066950A /* Geofence.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B8F36D1876C6680066950A /* Geofence.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,8 +96,6 @@
 		2917E95F186A2F2000A46AD7 /* UIColor+customColours.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+customColours.h"; sourceTree = "<group>"; };
 		2917E960186A2F2000A46AD7 /* UIColor+customColours.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+customColours.m"; sourceTree = "<group>"; };
 		2917E964186AEA8F00A46AD7 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		293FD5D2186B93C000F2CB61 /* GeofencePlace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeofencePlace.h; sourceTree = "<group>"; };
-		293FD5D3186B93C000F2CB61 /* GeofencePlace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeofencePlace.m; sourceTree = "<group>"; };
 		293FD5D5186B97C300F2CB61 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		293FD5DD186D584500F2CB61 /* AppKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKeys.h; sourceTree = "<group>"; };
 		293FD5DE186D585300F2CB61 /* AppKeys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppKeys.m; sourceTree = SOURCE_ROOT; };
@@ -114,12 +119,8 @@
 		298312341840480A00F62170 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		298312361840480A00F62170 /* ClockatorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClockatorTests.m; sourceTree = "<group>"; };
 		2983124918404F5200F62170 /* Channel_Slanted1.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Channel_Slanted1.ttf; path = ../Channel_Slanted1.ttf; sourceTree = "<group>"; };
-		2983124E18405A3B00F62170 /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Location.h; sourceTree = "<group>"; };
-		2983124F18405A3B00F62170 /* Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Location.m; sourceTree = "<group>"; };
 		2983125118405B4D00F62170 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
 		2983125318405D7C00F62170 /* Clockator.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = Clockator.sqlite; sourceTree = SOURCE_ROOT; };
-		298312591840667F00F62170 /* Friend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Friend.h; sourceTree = "<group>"; };
-		2983125A1840667F00F62170 /* Friend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Friend.m; sourceTree = "<group>"; };
 		2983125C1840820000F62170 /* circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = circle.png; path = Graphics/circle.png; sourceTree = "<group>"; };
 		2983125D1840820000F62170 /* hand.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = hand.png; path = Graphics/hand.png; sourceTree = "<group>"; };
 		298312601843210900F62170 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
@@ -140,6 +141,23 @@
 		29B8F34818717A690066950A /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		29B8F34A18717A7C0066950A /* UserInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInfoViewController.h; sourceTree = "<group>"; };
 		29B8F34B18717A7C0066950A /* UserInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserInfoViewController.m; sourceTree = "<group>"; };
+		29B8F34D1874B0EA0066950A /* FindFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindFriendsViewController.h; sourceTree = "<group>"; };
+		29B8F34E1874B0EA0066950A /* FindFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FindFriendsViewController.m; sourceTree = "<group>"; };
+		29B8F352187523510066950A /* Add.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Add.png; path = Graphics/Add.png; sourceTree = "<group>"; };
+		29B8F354187536040066950A /* AddSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = AddSelected.png; path = Graphics/AddSelected.png; sourceTree = "<group>"; };
+		29B8F3591875FCB90066950A /* KeyConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyConstants.h; sourceTree = "<group>"; };
+		29B8F35A1875FCB90066950A /* KeyConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyConstants.m; sourceTree = "<group>"; };
+		29B8F35C1876432F0066950A /* CKFriend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKFriend.h; sourceTree = "<group>"; };
+		29B8F35D1876432F0066950A /* CKFriend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CKFriend.m; sourceTree = "<group>"; };
+		29B8F35F187666FC0066950A /* PopoverView_Configuration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopoverView_Configuration.h; sourceTree = "<group>"; };
+		29B8F360187666FC0066950A /* PopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopoverView.h; sourceTree = "<group>"; };
+		29B8F361187666FC0066950A /* PopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopoverView.m; sourceTree = "<group>"; };
+		29B8F362187666FC0066950A /* PopoverViewCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopoverViewCompatibility.h; sourceTree = "<group>"; };
+		29B8F365187696B60066950A /* ClockHand.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ClockHand.png; path = Graphics/ClockHand.png; sourceTree = "<group>"; };
+		29B8F3671876B90A0066950A /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		29B8F36A1876B9BC0066950A /* Clockator.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Clockator.xcdatamodel; sourceTree = "<group>"; };
+		29B8F36C1876C6680066950A /* Geofence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Geofence.h; sourceTree = "<group>"; };
+		29B8F36D1876C6680066950A /* Geofence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Geofence.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +165,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				29B8F3681876B90A0066950A /* CoreData.framework in Frameworks */,
 				293FD5D6186B97C300F2CB61 /* AddressBookUI.framework in Frameworks */,
 				2917E965186AEA8F00A46AD7 /* MapKit.framework in Frameworks */,
 				298312671843216700F62170 /* CoreLocation.framework in Frameworks */,
@@ -183,6 +202,9 @@
 		298311FF1840480A00F62170 = {
 			isa = PBXGroup;
 			children = (
+				29B8F3691876B9BC0066950A /* Clockator.xcdatamodeld */,
+				29B8F36C1876C6680066950A /* Geofence.h */,
+				29B8F36D1876C6680066950A /* Geofence.m */,
 				2912531F18703BA3001A77C6 /* marathon.gpx */,
 				298312111840480A00F62170 /* Clockator */,
 				298312301840480A00F62170 /* ClockatorTests */,
@@ -203,6 +225,7 @@
 		2983120A1840480A00F62170 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				29B8F3671876B90A0066950A /* CoreData.framework */,
 				293FD5D5186B97C300F2CB61 /* AddressBookUI.framework */,
 				2917E964186AEA8F00A46AD7 /* MapKit.framework */,
 				2983129A184441D600F62170 /* libz.dylib */,
@@ -233,10 +256,13 @@
 				2983121D1840480A00F62170 /* Main.storyboard */,
 				2983121A1840480A00F62170 /* AppDelegate.h */,
 				2983121B1840480A00F62170 /* AppDelegate.m */,
+				29B8F3591875FCB90066950A /* KeyConstants.h */,
+				29B8F35A1875FCB90066950A /* KeyConstants.m */,
 				293FD5DD186D584500F2CB61 /* AppKeys.h */,
 				293FD5DE186D585300F2CB61 /* AppKeys.m */,
 				2983129F184449E800F62170 /* Controllers */,
 				298312A118444A1200F62170 /* Models */,
+				29B8F3641876670F0066950A /* Views */,
 				298312A0184449FD00F62170 /* Assets */,
 				298312231840480A00F62170 /* Images.xcassets */,
 				298312121840480A00F62170 /* Supporting Files */,
@@ -290,6 +316,8 @@
 				2917E95D18697D7600A46AD7 /* PlaceIconViewController.m */,
 				29921BC918662B1500443362 /* FBFindFriendsController.h */,
 				29921BCA18662B1600443362 /* FBFindFriendsController.m */,
+				29B8F34D1874B0EA0066950A /* FindFriendsViewController.h */,
+				29B8F34E1874B0EA0066950A /* FindFriendsViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -297,7 +325,10 @@
 		298312A0184449FD00F62170 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				29B8F365187696B60066950A /* ClockHand.png */,
 				293FD5E3186EB2E900F2CB61 /* CurrentLocation.png */,
+				29B8F352187523510066950A /* Add.png */,
+				29B8F354187536040066950A /* AddSelected.png */,
 				2917E95218696E1700A46AD7 /* Bar.png */,
 				2917E95318696E1700A46AD7 /* Home.png */,
 				2917E95418696E1700A46AD7 /* Other.png */,
@@ -314,16 +345,23 @@
 		298312A118444A1200F62170 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				293FD5D2186B93C000F2CB61 /* GeofencePlace.h */,
-				293FD5D3186B93C000F2CB61 /* GeofencePlace.m */,
+				29B8F35C1876432F0066950A /* CKFriend.h */,
+				29B8F35D1876432F0066950A /* CKFriend.m */,
 				2917E94F1869689100A46AD7 /* Place.h */,
 				2917E9501869689100A46AD7 /* Place.m */,
-				298312591840667F00F62170 /* Friend.h */,
-				2983125A1840667F00F62170 /* Friend.m */,
-				2983124E18405A3B00F62170 /* Location.h */,
-				2983124F18405A3B00F62170 /* Location.m */,
 			);
 			name = Models;
+			sourceTree = "<group>";
+		};
+		29B8F3641876670F0066950A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				29B8F35F187666FC0066950A /* PopoverView_Configuration.h */,
+				29B8F360187666FC0066950A /* PopoverView.h */,
+				29B8F361187666FC0066950A /* PopoverView.m */,
+				29B8F362187666FC0066950A /* PopoverViewCompatibility.h */,
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -406,8 +444,10 @@
 				293FD5E4186EB2E900F2CB61 /* CurrentLocation.png in Resources */,
 				2917E95818696E1700A46AD7 /* Home.png in Resources */,
 				2983124A18404F5200F62170 /* Channel_Slanted1.ttf in Resources */,
+				29B8F355187536040066950A /* AddSelected.png in Resources */,
 				298312241840480A00F62170 /* Images.xcassets in Resources */,
 				298312161840480A00F62170 /* InfoPlist.strings in Resources */,
+				29B8F353187523510066950A /* Add.png in Resources */,
 				2983125E1840820000F62170 /* circle.png in Resources */,
 				2917E95B18696E1700A46AD7 /* Work.png in Resources */,
 				2983125F1840820000F62170 /* hand.png in Resources */,
@@ -416,6 +456,7 @@
 				2983121F1840480A00F62170 /* Main.storyboard in Resources */,
 				2917E95718696E1700A46AD7 /* Bar.png in Resources */,
 				2912532018703BA3001A77C6 /* marathon.gpx in Resources */,
+				29B8F366187696B60066950A /* ClockHand.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -435,21 +476,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				293FD5D4186B93C000F2CB61 /* GeofencePlace.m in Sources */,
+				29B8F34F1874B0EB0066950A /* FindFriendsViewController.m in Sources */,
+				29B8F36E1876C6680066950A /* Geofence.m in Sources */,
 				298312221840480A00F62170 /* ClockViewController.m in Sources */,
 				29921BCB18662B1600443362 /* FBFindFriendsController.m in Sources */,
 				2917E95E18697D7600A46AD7 /* PlaceIconViewController.m in Sources */,
+				29B8F363187666FC0066950A /* PopoverView.m in Sources */,
 				29B8F34918717A690066950A /* LoginViewController.m in Sources */,
 				29B8F34C18717A7C0066950A /* UserInfoViewController.m in Sources */,
 				2917E9511869689100A46AD7 /* Place.m in Sources */,
 				2917E94E1869291E00A46AD7 /* GeofenceViewController.m in Sources */,
-				2983125018405A3B00F62170 /* Location.m in Sources */,
+				29B8F36B1876B9BC0066950A /* Clockator.xcdatamodeld in Sources */,
 				2983121C1840480A00F62170 /* AppDelegate.m in Sources */,
 				2917E961186A2F2000A46AD7 /* UIColor+customColours.m in Sources */,
-				2983125B1840667F00F62170 /* Friend.m in Sources */,
+				29B8F35E1876432F0066950A /* CKFriend.m in Sources */,
 				2917E8F61868052900A46AD7 /* SettingsViewController.m in Sources */,
 				293FD5DF186D585300F2CB61 /* AppKeys.m in Sources */,
 				298312181840480A00F62170 /* main.m in Sources */,
+				29B8F35B1875FCB90066950A /* KeyConstants.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -680,6 +724,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		29B8F3691876B9BC0066950A /* Clockator.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				29B8F36A1876B9BC0066950A /* Clockator.xcdatamodel */,
+			);
+			currentVersion = 29B8F36A1876B9BC0066950A /* Clockator.xcdatamodel */;
+			path = Clockator.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 298312001840480A00F62170 /* Project object */;
 }

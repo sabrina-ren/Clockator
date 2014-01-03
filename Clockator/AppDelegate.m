@@ -7,65 +7,63 @@
 //
 
 #import "AppDelegate.h"
-#import "Location.h"
-#import "Friend.h"
+#import "AppKeys.h"
+#import "ClockViewController.h"
+#import "KeyConstants.h"
 #import "UIColor+customColours.h"
 #import <Parse/Parse.h>
-#import "AppKeys.h"
+
+
+@interface AppDelegate() 
+
+@property (nonatomic) ClockViewController *clockController;
+@property (nonatomic) LoginViewController *loginController;
+
+@property (nonatomic) NSMutableData *imageData;
+
+@end
 
 @implementation AppDelegate
-@synthesize databaseName, databasePath,locations, friends, friendsAtLocation;
+@synthesize clockController,loginController;
+@synthesize  managedObjectContext = _managedObjectContext;
+@synthesize managedObjectModel = _managedObjectModel;
+@synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
-    
     [Parse setApplicationId:parseApplicationId clientKey:parseClientKey];
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     [PFFacebookUtils initializeFacebook];
     
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
-
     [[UINavigationBar appearance] setBarTintColor:[UIColor customTurquoise]];
-
-    [self copyDatabaseIfNeeded];
-    databasePath = [[NSBundle mainBundle] pathForResource:@"Clockator" ofType:@"sqlite"];
     
-    NSMutableArray *tempArray = [[NSMutableArray alloc]init];
-    locations = tempArray;
-    NSMutableArray *tempArray1 = [[NSMutableArray alloc]init];
-    friends = tempArray1;
-    friendsAtLocation = [[NSMutableArray alloc] init];
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     
-    [Location getInitialData:databasePath];
-    [Friend getInitialData:databasePath];
+    clockController = [storyboard instantiateViewControllerWithIdentifier:@"ClockViewController"];
     
-   
-    return YES;
-}
-
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-    return [PFFacebookUtils handleOpenURL:url];
-}
-
-
-- (NSString*) getDBPath {
-    databasePath = [[NSBundle mainBundle] pathForResource:@"Clockator" ofType:@"sqlite"];
-    return databasePath;
-}
-
-- (void)copyDatabaseIfNeeded {
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSError *error;
-    NSString* dbPath = [self getDBPath];
-    BOOL success = [fileManager fileExistsAtPath:dbPath];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:clockController];
+    self.window.rootViewController = navController;
+    [self.window makeKeyAndVisible];
     
-    if (!success) {
-        NSString *defaultDBPath = [[[NSBundle mainBundle] resourcePath]
-                                   stringByAppendingPathComponent:@"Clockator.sqlite"];
-        success = [fileManager copyItemAtPath:defaultDBPath toPath:dbPath error:&error];
-        if (!success) NSAssert1(0,@"Failed to create writable database file with message '%@'.",[error localizedDescription]);
+    loginController = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+    loginController.delegate = self;
+    
+    if (!([PFUser currentUser] && [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]])) {
+        // New user
+        [clockController presentViewController:loginController animated:NO completion:nil];
     }
+    else {
+        // Signed in, refresh data
+        [self refreshBasicFacebookData];
+        [self refreshFacebookFriends];
+        [self checkForAcceptedFriends];
+    };
+    
+    // Remote notifications
+//    [self handlePush:launchOptions];
+    
+    return YES;
 }
 							
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -97,5 +95,252 @@
     [FBSession.activeSession close];
 }
 
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    return [PFFacebookUtils handleOpenURL:url];
+}
+
+#pragma mark - Retrieve Facebook data
+
+- (void)refreshFacebookFriends {
+    [FBRequestConnection startForMyFriendsWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        if (!error) {
+            // Result contains array with user's friends in 'data' key
+            NSArray *friendObjects = [result objectForKey:@"data"];
+            NSMutableArray *friendIds = [NSMutableArray arrayWithCapacity:friendObjects.count];
+            
+            // Create list of friends' Facebook IDs
+            for (NSDictionary *friendObject in friendObjects) {
+                [friendIds addObject:friendObject[@"id"]];
+            }
+
+            [[NSUserDefaults standardUserDefaults] setObject:friendIds forKey:@"friendIds"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+
+            NSLog(@"facebook id: %@", [[PFUser currentUser] objectForKey:@"fbID"]);
+            NSLog(@"Friend id count: %lu", (unsigned long)friendIds.count);
+            clockController.friendIds = friendIds;
+        }
+    }];
+}
+
+- (void)refreshBasicFacebookData {
+    // Create request for user's Facebook data
+    FBRequest *request = [FBRequest requestForMe];
+    
+    // Send request to Facebook
+    [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        if (!error) {
+            NSDictionary *userData = (NSDictionary *)result;
+            
+            NSString *facebookID = userData[@"id"];
+            NSString *name = userData[@"name"];
+            
+            [[PFUser currentUser] setObject:facebookID forKey:@"fbID"];
+            [[PFUser currentUser] setObject:name forKey:@"displayName"];
+            [[PFUser currentUser] saveInBackground];
+            
+            //            userNameLabel.text = name;
+            self.imageData = [[NSMutableData alloc] init];
+
+            NSURL *imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=100&height=100", facebookID]];
+            
+            NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:imageURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:2.0f];
+            // Run network request asynchronously
+            NSURLConnection *urlConnection = [[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];
+        }
+        else if ([error.userInfo[FBErrorParsedJSONResponseKey][@"body"][@"error"][@"type"] isEqualToString:@"OAuthException"]) { // Since the request failed, we can check if it was due to an invalid session
+            NSLog(@"The facebook session was invalidated");
+            [clockController presentViewController:loginController animated:NO completion:nil];
+        }
+        else {
+            NSLog(@"Some other error: %@", error);
+        }
+    }];
+}
+
+// Called everytime piece of data is received
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    [self.imageData appendData:data];
+}
+
+// Called when entire image is finished downloading
+- (void)connectionDidFinishLoading:(NSURLConnection*)connection {
+    NSLog(@"saved profile picture");
+    [[PFUser currentUser] setObject:self.imageData forKey:@"profilePicture"];
+    [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (error) NSLog(@"image save error: %@", error);
+        if (succeeded) NSLog(@"succeeded: %i", succeeded);
+    }];
+}
+
+#pragma mark - Refresh Parse data
+
+- (void)checkForAcceptedFriends {
+    // Find accepted friend requests
+    PFQuery *query = [PFQuery queryWithClassName:CKFriendReqClass];
+    [query whereKey:CKFriendReqFromUserKey equalTo:[PFUser currentUser]];
+    [query whereKey:CKFriendReqStatusKey equalTo:@"accepted"];
+    [query includeKey:CKFriendReqToUserKey];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        NSMutableArray *friends = [[PFUser currentUser] objectForKey:CKUserFriendsKey];
+        if (!friends) friends = [[NSMutableArray alloc] init];
+        
+        for (PFObject *object in objects) {
+            // Add to friends array
+            PFUser *newFriend = [object objectForKey:CKFriendReqToUserKey];
+            [friends addObject:newFriend.objectId];
+            [[PFUser currentUser] setObject:friends forKey:CKUserFriendsKey];
+            
+            // Change status to added
+            [object setObject:@"added" forKey:CKFriendReqStatusKey];
+            [object saveEventually];
+        }
+        [[PFUser currentUser] saveEventually];
+    }];
+}
+
+#pragma mark - Remote Notifications
+
+//- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+//    [PFPush storeDeviceToken:deviceToken];
+//    [[PFInstallation currentInstallation] addUniqueObject:@"" forKey:CKInstallationChannelsKey];
+//    [[PFInstallation currentInstallation] saveEventually];
+//    
+//    
+//    if ([PFUser currentUser]) {
+//        NSString *privateChannelName = [[PFUser currentUser] objectForKey:CKUserPrivateChannelKey];
+//        if (privateChannelName && privateChannelName.length > 0) {
+//            NSLog(@"Subscribing user to %@", privateChannelName);
+//            [[PFInstallation currentInstallation] addUniqueObject:privateChannelName forKey:CKInstallationChannelsKey];
+//        }
+//    }
+//    [[PFInstallation currentInstallation] saveEventually];
+//}
+//
+//- (void)handlePush:(NSDictionary *)launchOptions {
+//    NSDictionary *payload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+//    if (payload && [PFUser currentUser]) {
+//        PFUser *fromFriend = [payload objectForKey:CKPayloadFromUserKey];
+//        NSString *type = [payload objectForKey:CKPayloadTypeKey];
+//        if ([type isEqualToString:@"accepted"]) {
+//            // Add to own friends list
+//            NSMutableArray *friends = [[PFUser currentUser] objectForKey:CKUserFriendsKey];
+//            if (!friends || friends.count == 0) friends = [[NSMutableArray alloc] init];
+//            [friends addObject:fromFriend.objectId];
+//            [[PFUser currentUser] setObject:friends forKey:CKUserFriendsKey];
+//        }
+//    }
+//}
+
+#pragma mark - LoginViewController protocol method
+
+- (void)didLoginUserIsNew:(BOOL)isNew {
+    [clockController dismissViewControllerAnimated:YES completion:nil];
+    [self refreshBasicFacebookData];
+    [self refreshFacebookFriends];
+    [self checkForAcceptedFriends];
+    
+    // Subscribe to private push channel
+//    if ([PFUser currentUser]) {
+//        NSString *privateChannelName = [NSString stringWithFormat:@"user_%@", [PFUser currentUser].objectId];
+//        [[PFInstallation currentInstallation] setObject:[PFUser currentUser] forKey:CKInstallationUserKey];
+//        [[PFInstallation currentInstallation] saveEventually];
+//        [[PFUser currentUser] setObject:privateChannelName forKey:CKUserPrivateChannelKey];
+//    }
+}
+
+- (void)saveContext
+{
+    NSError *error = nil;
+    NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
+    if (managedObjectContext != nil) {
+        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
+            // Replace this implementation with code to handle the error appropriately.
+            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            abort();
+        }
+    }
+}
+
+#pragma mark - Core Data stack
+
+// Returns the managed object context for the application.
+// If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
+- (NSManagedObjectContext *)managedObjectContext
+{
+    if (_managedObjectContext != nil) {
+        return _managedObjectContext;
+    }
+    
+    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+    if (coordinator != nil) {
+        _managedObjectContext = [[NSManagedObjectContext alloc] init];
+        [_managedObjectContext setPersistentStoreCoordinator:coordinator];
+    }
+    return _managedObjectContext;
+}
+
+// Returns the managed object model for the application.
+// If the model doesn't already exist, it is created from the application's model.
+- (NSManagedObjectModel *)managedObjectModel
+{
+    if (_managedObjectModel != nil) {
+        return _managedObjectModel;
+    }
+    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"Clockator" withExtension:@"momd"];
+    _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
+    return _managedObjectModel;
+}
+
+// Returns the persistent store coordinator for the application.
+// If the coordinator doesn't already exist, it is created and the application's store added to it.
+- (NSPersistentStoreCoordinator *)persistentStoreCoordinator
+{
+    if (_persistentStoreCoordinator != nil) {
+        return _persistentStoreCoordinator;
+    }
+    
+    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"Clockator.sqlite"];
+    
+    NSError *error = nil;
+    _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
+    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
+        /*
+         Replace this implementation with code to handle the error appropriately.
+         
+         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+         
+         Typical reasons for an error here include:
+         * The persistent store is not accessible;
+         * The schema for the persistent store is incompatible with current managed object model.
+         Check the error message to determine what the actual problem was.
+         
+         If the persistent store is not accessible, there is typically something wrong with the file path. Often, a file URL is pointing into the application's resources directory instead of a writeable directory.
+         
+         If you encounter schema incompatibility errors during development, you can reduce their frequency by:
+         * Simply deleting the existing store:
+         [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil]
+         
+         * Performing automatic lightweight migration by passing the following dictionary as the options parameter:
+         @{NSMigratePersistentStoresAutomaticallyOption:@YES, NSInferMappingModelAutomaticallyOption:@YES}
+         
+         Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
+         
+         */
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }
+    
+    return _persistentStoreCoordinator;
+}
+
+#pragma mark - Application's Documents directory
+
+// Returns the URL to the application's Documents directory.
+- (NSURL *)applicationDocumentsDirectory
+{
+    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+}
 
 @end
