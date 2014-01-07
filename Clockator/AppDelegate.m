@@ -20,6 +20,7 @@
 @property (nonatomic) LoginViewController *loginController;
 
 @property (nonatomic) NSMutableData *imageData;
+@property (nonatomic) NSString *userDisplayName;
 
 @end
 
@@ -36,22 +37,17 @@
     [PFFacebookUtils initializeFacebook];
     
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
-    [[UINavigationBar appearance] setBarTintColor:[UIColor customTurquoise]];
+    [[UINavigationBar appearance] setBarTintColor:[UIColor customSalmon]];
     
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    
     clockController = [storyboard instantiateViewControllerWithIdentifier:@"ClockViewController"];
-    
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:clockController];
     self.window.rootViewController = navController;
     [self.window makeKeyAndVisible];
     
-    loginController = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
-    loginController.delegate = self;
-    
     if (!([PFUser currentUser] && [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]])) {
         // New user
-        [clockController presentViewController:loginController animated:NO completion:nil];
+        [self presentLoginControllerAnimated:NO];
     }
     else {
         // Signed in, refresh data
@@ -60,10 +56,24 @@
         [self checkForAcceptedFriends];
     };
     
-    // Remote notifications
-//    [self handlePush:launchOptions];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logUserOut) name:CKNotificationShouldLogOut object:nil];
     
     return YES;
+}
+
+- (void)presentLoginControllerAnimated:(BOOL)animated {
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    loginController = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+    loginController.delegate = self;
+    [clockController presentViewController:loginController animated:animated completion:nil];
+}
+
+- (void)logUserOut {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:CKUserPreferencesClockFace];
+
+    [PFUser logOut];
+    [clockController.navigationController popToRootViewControllerAnimated:NO];
+    [self presentLoginControllerAnimated:YES];
 }
 							
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -133,10 +143,10 @@
             NSDictionary *userData = (NSDictionary *)result;
             
             NSString *facebookID = userData[@"id"];
-            NSString *name = userData[@"name"];
+            self.userDisplayName = userData[@"name"];
             
             [[PFUser currentUser] setObject:facebookID forKey:@"fbID"];
-            [[PFUser currentUser] setObject:name forKey:@"displayName"];
+            [[PFUser currentUser] setObject:self.userDisplayName forKey:@"displayName"];
             [[PFUser currentUser] saveInBackground];
             
             //            userNameLabel.text = name;
@@ -166,11 +176,14 @@
 // Called when entire image is finished downloading
 - (void)connectionDidFinishLoading:(NSURLConnection*)connection {
     NSLog(@"saved profile picture");
-    [[PFUser currentUser] setObject:self.imageData forKey:@"profilePicture"];
-    [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        if (error) NSLog(@"image save error: %@", error);
-        if (succeeded) NSLog(@"succeeded: %i", succeeded);
-    }];
+    if ([PFUser currentUser]) {
+        [[PFUser currentUser] setObject:self.imageData forKey:@"profilePicture"];
+        [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (error) NSLog(@"image save error: %@", error);
+            if (succeeded) NSLog(@"succeeded: %i", succeeded);
+        }];
+    }
+    [loginController displayUserInfo:self.imageData forUser:self.userDisplayName];
 }
 
 #pragma mark - Refresh Parse data
@@ -199,54 +212,16 @@
     }];
 }
 
-#pragma mark - Remote Notifications
-
-//- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-//    [PFPush storeDeviceToken:deviceToken];
-//    [[PFInstallation currentInstallation] addUniqueObject:@"" forKey:CKInstallationChannelsKey];
-//    [[PFInstallation currentInstallation] saveEventually];
-//    
-//    
-//    if ([PFUser currentUser]) {
-//        NSString *privateChannelName = [[PFUser currentUser] objectForKey:CKUserPrivateChannelKey];
-//        if (privateChannelName && privateChannelName.length > 0) {
-//            NSLog(@"Subscribing user to %@", privateChannelName);
-//            [[PFInstallation currentInstallation] addUniqueObject:privateChannelName forKey:CKInstallationChannelsKey];
-//        }
-//    }
-//    [[PFInstallation currentInstallation] saveEventually];
-//}
-//
-//- (void)handlePush:(NSDictionary *)launchOptions {
-//    NSDictionary *payload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
-//    if (payload && [PFUser currentUser]) {
-//        PFUser *fromFriend = [payload objectForKey:CKPayloadFromUserKey];
-//        NSString *type = [payload objectForKey:CKPayloadTypeKey];
-//        if ([type isEqualToString:@"accepted"]) {
-//            // Add to own friends list
-//            NSMutableArray *friends = [[PFUser currentUser] objectForKey:CKUserFriendsKey];
-//            if (!friends || friends.count == 0) friends = [[NSMutableArray alloc] init];
-//            [friends addObject:fromFriend.objectId];
-//            [[PFUser currentUser] setObject:friends forKey:CKUserFriendsKey];
-//        }
-//    }
-//}
-
 #pragma mark - LoginViewController protocol method
 
 - (void)didLoginUserIsNew:(BOOL)isNew {
-    [clockController dismissViewControllerAnimated:YES completion:nil];
     [self refreshBasicFacebookData];
     [self refreshFacebookFriends];
     [self checkForAcceptedFriends];
-    
-    // Subscribe to private push channel
-//    if ([PFUser currentUser]) {
-//        NSString *privateChannelName = [NSString stringWithFormat:@"user_%@", [PFUser currentUser].objectId];
-//        [[PFInstallation currentInstallation] setObject:[PFUser currentUser] forKey:CKInstallationUserKey];
-//        [[PFInstallation currentInstallation] saveEventually];
-//        [[PFUser currentUser] setObject:privateChannelName forKey:CKUserPrivateChannelKey];
-//    }
+}
+- (void)shouldDismissLoginController {
+    clockController.shouldRefreshClock = YES;
+    [clockController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)saveContext
@@ -258,7 +233,6 @@
             // Replace this implementation with code to handle the error appropriately.
             // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
             NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
         }
     }
 }

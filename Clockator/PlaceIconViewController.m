@@ -7,6 +7,7 @@
 //
 
 #import "PlaceIconViewController.h"
+#import "KeyConstants.h"
 #import "Place.h"
 #import "UIColor+customColours.h"
 
@@ -27,6 +28,7 @@
 
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 15, 44)];
     [titleLabel setTextColor:[UIColor whiteColor]];
+    [titleLabel setFont:[UIFont fontWithName:@"DistrictPro-Thin" size:25]];
     if (isIconView)[titleLabel setText:@"Choose Icon"];
     else [titleLabel setText:@"Clock Face"];
     
@@ -50,15 +52,21 @@
     UISwitch *cellSwitch = sender;
     Place *thisPlace = clockPlaces[cellSwitch.tag];
     thisPlace.isShown = cellSwitch.on;
+    
+    [self.delegate didChangeClockFace];
     NSLog(@"%i", thisPlace.isShown);
-    //    NSLog(@"Cell %i is %@", cellSwitch.tag, cellSwitch.on ? @"ON":@"OFF");
+    
+    NSMutableArray *shownPreferences = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] arrayForKey:CKUserPreferencesClockFace]];
+    [shownPreferences replaceObjectAtIndex:cellSwitch.tag withObject:[NSNumber numberWithBool:thisPlace.isShown]];
+
+    [[NSUserDefaults standardUserDefaults] setObject:[NSArray arrayWithArray:shownPreferences] forKey:CKUserPreferencesClockFace];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
     // Return the number of sections.
     return 1;
 }
@@ -91,7 +99,7 @@
         cell.accessoryView = cellSwitch;
         cellSwitch.tag = indexPath.row;
         [cellSwitch setOn:[clockPlaces[indexPath.row] isShown] animated:NO];
-        [cellSwitch setOnTintColor:[UIColor customLightBlue]];
+        [cellSwitch setOnTintColor:[UIColor customLightSalmon]];
         [cellSwitch addTarget:self action:@selector(switchChanged:) forControlEvents:UIControlEventValueChanged];
     }
     

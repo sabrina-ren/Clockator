@@ -161,8 +161,11 @@
     UIFont *font = kTextFont;
     
     CGSize screenSize = [self screenSize];
-    CGSize textSize = [text sizeWithFont:font constrainedToSize:CGSizeMake(screenSize.width - kHorizontalMargin*4.f, 1000.f) lineBreakMode:UILineBreakModeWordWrap];
-    
+    NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil];
+    CGRect rect = [text boundingRectWithSize:CGSizeMake(screenSize.width - kHorizontalMargin*4.f, 1000.f) options:(NSStringDrawingUsesLineFragmentOrigin) attributes:attributesDictionary context:nil];
+    CGSize textSize = rect.size;
+//    CGSize textSize = [text sizeWithFont:font constrainedToSize:CGSizeMake(screenSize.width - kHorizontalMargin*4.f, 1000.f) lineBreakMode:UILineBreakModeWordWrap];
+
     UILabel *textView = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, textSize.width, textSize.height)];
     textView.backgroundColor = [UIColor clearColor];
     textView.userInteractionEnabled = NO;
@@ -180,7 +183,10 @@
     UIFont *font = kTextFont;
     
     CGSize screenSize = [self screenSize];
-    CGSize textSize = [text sizeWithFont:font constrainedToSize:CGSizeMake(screenSize.width - kHorizontalMargin*4.f, 1000.f) lineBreakMode:UILineBreakModeWordWrap];
+    NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil];
+    CGRect rect = [text boundingRectWithSize:CGSizeMake(screenSize.width - kHorizontalMargin*4.f, 1000.f) options:(NSStringDrawingUsesLineFragmentOrigin) attributes:attributesDictionary context:nil];
+    CGSize textSize = rect.size;
+//    CGSize textSize = [text sizeWithFont:font constrainedToSize:CGSizeMake(screenSize.width - kHorizontalMargin*4.f, 1000.f) lineBreakMode:UILineBreakModeWordWrap];
     
     UILabel *textView = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, textSize.width, textSize.height)];
     textView.backgroundColor = [UIColor clearColor];
@@ -797,15 +803,15 @@
 
 - (void)didTapButton:(UIButton *)sender
 {
-    int index = [subviewsArray indexOfObject:sender];
-    
-    if (index == NSNotFound) {
-        return;
-    }
-    
-    if (delegate && [delegate respondsToSelector:@selector(popoverView:didSelectItemAtIndex:)]) {
-        [delegate popoverView:self didSelectItemAtIndex:index];
-    }
+//    int index = [subviewsArray indexOfObject:sender];
+//    
+//    if (index == NSNotFound) {
+//        return;
+//    }
+//    
+//    if (delegate && [delegate respondsToSelector:@selector(popoverView:didSelectItemAtIndex:)]) {
+//        [delegate popoverView:self didSelectItemAtIndex:index];
+//    }
 }
 
 - (void)dismiss

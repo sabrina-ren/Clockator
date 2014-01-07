@@ -11,6 +11,7 @@
 @class PlaceIconViewController;
 
 @protocol PlaceIconControllerDelegate <NSObject>
+- (void)didChangeClockFace;
 - (void)placeIconController:(PlaceIconViewController *)controller didChangeIconIndex:(NSInteger)index;
 @end
 

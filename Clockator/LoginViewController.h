@@ -10,10 +10,13 @@
 
 @protocol LoginControllerDelegate <NSObject>
 - (void)didLoginUserIsNew:(BOOL)isNew;
+- (void)shouldDismissLoginController;
 @end
 
 @interface LoginViewController : UIViewController
 
 @property (nonatomic, weak) id <LoginControllerDelegate> delegate;
+
+- (void)displayUserInfo:(NSData *)imageData forUser:(NSString *)name;
 
 @end

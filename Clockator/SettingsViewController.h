@@ -20,9 +20,10 @@ typedef enum {
 
 @protocol SettingsControllerDelegate <NSObject>
 - (void)didUpdateGeofence:(Geofence *)geofence changeType:(ChangeType)type;
+- (void)didChangeClockFace;
 @end
 
-@interface SettingsViewController : UITableViewController <GeofenceControllerDelegate>
+@interface SettingsViewController : UITableViewController <GeofenceControllerDelegate, PlaceIconControllerDelegate>
 
 @property (nonatomic) NSArray *friendIds;
 @property (nonatomic) CLLocation *currentLocation;

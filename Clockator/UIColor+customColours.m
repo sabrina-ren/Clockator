@@ -10,26 +10,25 @@
 
 @implementation UIColor (customColours)
 
-+ (UIColor *)customTurquoise {
-    return [UIColor colorWithHue:220.0/360.0 saturation:1.0 brightness:0.54 alpha:1];
++ (UIColor *)customSalmon {
+    return [UIColor colorWithHue:0.0/360.0 saturation:0.7 brightness:0.85 alpha:1];
 }
 
-+ (UIColor *)customLightBlue {
-    return [UIColor colorWithHue:185.0/360.0 saturation:0.56 brightness:0.84 alpha:1];
++ (UIColor *)customLightSalmon {
+    return [UIColor colorWithHue:2.0/360.0 saturation:0.7 brightness:0.95 alpha:1];
 }
 
-+ (UIColor *)customTransparentTurquoise {
-    return [UIColor colorWithHue:185.0/360.0 saturation:0.56 brightness:0.84 alpha:0.5];
++ (UIColor *)customTransparentSalmon {
+    return [UIColor colorWithHue:0 saturation:0.7 brightness:0.85 alpha:0.8];
 }
 
-+ (UIColor *)customCoral {
-    return [UIColor colorWithHue:4.0/360.0 saturation:0.7 brightness:0.85 alpha:1];
++ (UIColor *)customTransparentBlack {
+    return [UIColor colorWithHue:0 saturation:0 brightness:0 alpha:0.3];
 }
 
-+ (UIColor *)customOrange{
-    return [UIColor colorWithHue:30.0/360.0 saturation:0.69 brightness:0.94 alpha:1];
++ (UIColor *)customTransparentMapSalmon {
+    return [UIColor colorWithHue:2.0/360.0 saturation:0.8 brightness:1 alpha:0.5];
 }
-
 
 
 @end

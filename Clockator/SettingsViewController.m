@@ -7,7 +7,7 @@
 //
 
 #import "SettingsViewController.h"
-//#import "FBFindFriendsController.h"
+#import "KeyConstants.h"
 #import "FindFriendsViewController.h"
 #import "PlaceIconViewController.h"
 #import "Geofence.h"
@@ -38,16 +38,13 @@
 {
     [super viewDidLoad];
     
-    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 10, 40)];
+    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 20, 40)];
+    [titleLabel setFont:[UIFont fontWithName:@"DistrictPro-Thin" size:25]];
     [titleLabel setTextColor:[UIColor whiteColor]];
     [titleLabel setText:@"Settings"];
     self.navigationItem.titleView = titleLabel;
-
-    settingsNames = @[@"Find Friends", @"Clock Face"];
-    
-//    FBFindFriendsController *findFriendsController = [[FBFindFriendsController alloc] init];
-//    [findFriendsController preloadFriends];
-//    [findFriendsController loadData];
+    self.clearsSelectionOnViewWillAppear = YES;
+    settingsNames = @[@"Friends", @"Clock Face", @"Log Out"];
 
     FindFriendsViewController *findFriendsController = [self.storyboard instantiateViewControllerWithIdentifier:@"FindFriendsViewController"];
     findFriendsController.friendIds = self.friendIds;
@@ -55,13 +52,14 @@
     PlaceIconViewController *clockFaceController = [self.storyboard instantiateViewControllerWithIdentifier:@"PlaceIconViewController"];
     clockFaceController.clockPlaces = clockPlaces;
     clockFaceController.isIconView = NO;
+    clockFaceController.delegate = self;
     
     settingsControllers = [NSArray arrayWithObjects:findFriendsController, clockFaceController, nil];
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:selectedIndex];
-    [cell setHighlighted:NO];
+- (void)viewWillAppear:(BOOL)animated {
+    [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:animated];
+    [super viewWillAppear:animated];
 }
 
 - (void)didReceiveMemoryWarning
@@ -74,16 +72,14 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
     return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
     // Return the number of rows in the section.
-    if (section == 0) return settingsNames.count;
-    else if (section ==1) return geofences.count + 1;
+    if (section == 0) return geofences.count + 1;
+    else if (section ==1) return settingsNames.count;
     return -1;
 }
 
@@ -91,17 +87,11 @@
 {
     UITableViewCell *cell;
     if (indexPath.section == 0) {
-        cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        NSString *title = settingsNames[indexPath.row];
-        cell.textLabel.text = title;
-    }
-    else if (indexPath.section == 1) {
         if (indexPath.row == geofences.count) {
             // Last row is to add a new place
             cell = [tableView dequeueReusableCellWithIdentifier:@"AddCell"];
             cell.textLabel.text = @"+";
-            cell.textLabel.textColor = [UIColor customTurquoise];
+            cell.textLabel.textColor = [UIColor customSalmon];
             cell.textLabel.textAlignment = NSTextAlignmentCenter;
             [cell.textLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:25.0]];
         } else {
@@ -111,29 +101,39 @@
             cell.detailTextLabel.text = [geofences[indexPath.row] fenceAddress];
         }
     }
+    else if (indexPath.section == 1) {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
+        NSString *title = settingsNames[indexPath.row];
+        if (![title isEqualToString:@"Log Out"]) cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.textLabel.text = title;
+    }
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 0) {
-        [self.navigationController pushViewController:settingsControllers[indexPath.row] animated:YES];
-    } else {
         selectedIndex = indexPath;
-         geofenceController = [self.storyboard instantiateViewControllerWithIdentifier:@"GeofenceViewController"];
+        geofenceController = [self.storyboard instantiateViewControllerWithIdentifier:@"GeofenceViewController"];
         geofenceController.clockPlaces = clockPlaces;
         geofenceController.currentLocation = self.currentLocation;
         geofenceController.delegate = self;
-
+        
         // If new place
         if (geofences.count == indexPath.row) geofenceController.geoPlace = nil;
         else geofenceController.geoPlace = geofences[indexPath.row];
-  
+        
         [self.navigationController pushViewController:geofenceController animated:YES];
+    }
+    else if (indexPath.section == 1) {
+        if ([settingsNames[indexPath.row] isEqualToString:@"Log Out"]) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:CKNotificationShouldLogOut object:nil];
+        }
+        else [self.navigationController pushViewController:settingsControllers[indexPath.row] animated:YES];
     }
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if (section == 1) return @"My Places";
+    if (section == 0) return @"My Places";
     return nil;
 }
 
@@ -141,7 +141,7 @@
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Second section is editable
-    if (indexPath.section == 1 && indexPath.row != geofences.count) return YES;
+    if (indexPath.section == 0 && indexPath.row != geofences.count) return YES;
     return NO;
 }
 
@@ -167,7 +167,7 @@
     NSLog(@"YAY coordinates updated");
 }
 
-#pragma mark - MyPlaceViewController protocol method
+#pragma mark - MyPlaceViewController protocol
 
 - (void)geofenceViewController:(GeofenceViewController *)controller didUpdateGeofence:(Geofence *)geofence isNew:(BOOL)isNew {
     if (isNew){
@@ -181,7 +181,6 @@
     [self.tableView reloadData];
     
     if (isNew) {
-//        NSIndexPath *path = [NSIndexPath indexPathForRow:selectedIndex.row inSection:1];
         NSArray *indexPaths = [NSArray arrayWithObject:selectedIndex];
         [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationLeft];
     }
@@ -189,6 +188,16 @@
         NSLog(@"Geofences %@", place.fenceName);
     }
     
+}
+
+#pragma mark - PlaceIconController protocol
+
+- (void)didChangeClockFace {
+    [self.delegate didChangeClockFace];
+}
+
+- (void)placeIconController:(PlaceIconViewController *)controller didChangeIconIndex:(NSInteger)index {
+    // For use with geofence view controller
 }
 
 @end

@@ -10,11 +10,11 @@
 
 @interface UIColor (customColours)
 
-+ (UIColor *)customTurquoise;
-+ (UIColor *)customLightBlue;
-+ (UIColor *)customTransparentTurquoise;
++ (UIColor *)customSalmon;
++ (UIColor *)customLightSalmon;
++ (UIColor *)customTransparentSalmon;
 
-+ (UIColor *)customCoral;
-+ (UIColor *)customOrange;
++ (UIColor *)customTransparentBlack;
++ (UIColor *)customTransparentMapSalmon;
 
 @end

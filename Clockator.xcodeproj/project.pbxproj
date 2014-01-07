@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2912532018703BA3001A77C6 /* marathon.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 2912531F18703BA3001A77C6 /* marathon.gpx */; };
 		2917E8F61868052900A46AD7 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2917E8F51868052900A46AD7 /* SettingsViewController.m */; };
 		2917E94E1869291E00A46AD7 /* GeofenceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2917E94D1869291E00A46AD7 /* GeofenceViewController.m */; };
 		2917E9511869689100A46AD7 /* Place.m in Sources */ = {isa = PBXBuildFile; fileRef = 2917E9501869689100A46AD7 /* Place.m */; };
@@ -22,6 +21,7 @@
 		293FD5D6186B97C300F2CB61 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 293FD5D5186B97C300F2CB61 /* AddressBookUI.framework */; };
 		293FD5DF186D585300F2CB61 /* AppKeys.m in Sources */ = {isa = PBXBuildFile; fileRef = 293FD5DE186D585300F2CB61 /* AppKeys.m */; };
 		293FD5E4186EB2E900F2CB61 /* CurrentLocation.png in Resources */ = {isa = PBXBuildFile; fileRef = 293FD5E3186EB2E900F2CB61 /* CurrentLocation.png */; };
+		296D8801187BC94400A119BA /* userClockHand.png in Resources */ = {isa = PBXBuildFile; fileRef = 296D8800187BC94400A119BA /* userClockHand.png */; };
 		2983120C1840480A00F62170 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983120B1840480A00F62170 /* Foundation.framework */; };
 		2983120E1840480A00F62170 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983120D1840480A00F62170 /* CoreGraphics.framework */; };
 		298312101840480A00F62170 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983120F1840480A00F62170 /* UIKit.framework */; };
@@ -49,13 +49,10 @@
 		2983126B1843217400F62170 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983126A1843217400F62170 /* MobileCoreServices.framework */; };
 		2983126D1843217A00F62170 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983126C1843217A00F62170 /* QuartzCore.framework */; };
 		2983126F1843217F00F62170 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983126E1843217F00F62170 /* Security.framework */; };
-		298312711843218400F62170 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 298312701843218400F62170 /* StoreKit.framework */; };
 		298312731843218C00F62170 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 298312721843218C00F62170 /* SystemConfiguration.framework */; };
 		29831275184439E900F62170 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29831274184439E900F62170 /* FacebookSDK.framework */; };
 		2983129B184441D600F62170 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2983129A184441D600F62170 /* libz.dylib */; };
-		29921BCB18662B1600443362 /* FBFindFriendsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29921BCA18662B1600443362 /* FBFindFriendsController.m */; };
 		29B8F34918717A690066950A /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B8F34818717A690066950A /* LoginViewController.m */; };
-		29B8F34C18717A7C0066950A /* UserInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B8F34B18717A7C0066950A /* UserInfoViewController.m */; };
 		29B8F34F1874B0EB0066950A /* FindFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B8F34E1874B0EA0066950A /* FindFriendsViewController.m */; };
 		29B8F353187523510066950A /* Add.png in Resources */ = {isa = PBXBuildFile; fileRef = 29B8F352187523510066950A /* Add.png */; };
 		29B8F355187536040066950A /* AddSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = 29B8F354187536040066950A /* AddSelected.png */; };
@@ -66,6 +63,17 @@
 		29B8F3681876B90A0066950A /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B8F3671876B90A0066950A /* CoreData.framework */; };
 		29B8F36B1876B9BC0066950A /* Clockator.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 29B8F3691876B9BC0066950A /* Clockator.xcdatamodeld */; };
 		29B8F36E1876C6680066950A /* Geofence.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B8F36D1876C6680066950A /* Geofence.m */; };
+		29B8F370187758FB0066950A /* Refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = 29B8F36F187758FB0066950A /* Refresh.png */; };
+		29B8F3741877593E0066950A /* Settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 29B8F3731877593E0066950A /* Settings.png */; };
+		29B8F3781877B7690066950A /* Paris.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 29B8F3771877B7690066950A /* Paris.jpg */; };
+		29B8F37A1877B7990066950A /* NYC.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 29B8F3791877B7990066950A /* NYC.jpg */; };
+		29B8F37D1877FF560066950A /* Title.png in Resources */ = {isa = PBXBuildFile; fileRef = 29B8F37C1877FF560066950A /* Title.png */; };
+		29B8F381187809840066950A /* DistProTh.otf in Resources */ = {isa = PBXBuildFile; fileRef = 29B8F380187809840066950A /* DistProTh.otf */; };
+		29B8F38318781F260066950A /* BlurredNYC.png in Resources */ = {isa = PBXBuildFile; fileRef = 29B8F38218781F260066950A /* BlurredNYC.png */; };
+		29B8F3851878AAAB0066950A /* Menu.png in Resources */ = {isa = PBXBuildFile; fileRef = 29B8F3841878AAAB0066950A /* Menu.png */; };
+		29B8F3891878AEFD0066950A /* Clock.png in Resources */ = {isa = PBXBuildFile; fileRef = 29B8F3861878AEFD0066950A /* Clock.png */; };
+		29B8F38A1878AEFD0066950A /* Globe.png in Resources */ = {isa = PBXBuildFile; fileRef = 29B8F3871878AEFD0066950A /* Globe.png */; };
+		29B8F38B1878AEFD0066950A /* Marker.png in Resources */ = {isa = PBXBuildFile; fileRef = 29B8F3881878AEFD0066950A /* Marker.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,7 +87,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2912531F18703BA3001A77C6 /* marathon.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = marathon.gpx; path = ../marathon.gpx; sourceTree = "<group>"; };
 		2917E8F41868052900A46AD7 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		2917E8F51868052900A46AD7 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		2917E94C1869291E00A46AD7 /* GeofenceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeofenceViewController.h; sourceTree = "<group>"; };
@@ -100,6 +107,7 @@
 		293FD5DD186D584500F2CB61 /* AppKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKeys.h; sourceTree = "<group>"; };
 		293FD5DE186D585300F2CB61 /* AppKeys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppKeys.m; sourceTree = SOURCE_ROOT; };
 		293FD5E3186EB2E900F2CB61 /* CurrentLocation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = CurrentLocation.png; path = Graphics/CurrentLocation.png; sourceTree = "<group>"; };
+		296D8800187BC94400A119BA /* userClockHand.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = userClockHand.png; path = Graphics/userClockHand.png; sourceTree = "<group>"; };
 		298312081840480A00F62170 /* Clockator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clockator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2983120B1840480A00F62170 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2983120D1840480A00F62170 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -131,16 +139,11 @@
 		2983126A1843217400F62170 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		2983126C1843217A00F62170 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		2983126E1843217F00F62170 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		298312701843218400F62170 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		298312721843218C00F62170 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		29831274184439E900F62170 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
 		2983129A184441D600F62170 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		29921BC918662B1500443362 /* FBFindFriendsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBFindFriendsController.h; sourceTree = "<group>"; };
-		29921BCA18662B1600443362 /* FBFindFriendsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBFindFriendsController.m; sourceTree = "<group>"; };
 		29B8F34718717A690066950A /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		29B8F34818717A690066950A /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
-		29B8F34A18717A7C0066950A /* UserInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInfoViewController.h; sourceTree = "<group>"; };
-		29B8F34B18717A7C0066950A /* UserInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserInfoViewController.m; sourceTree = "<group>"; };
 		29B8F34D1874B0EA0066950A /* FindFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindFriendsViewController.h; sourceTree = "<group>"; };
 		29B8F34E1874B0EA0066950A /* FindFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FindFriendsViewController.m; sourceTree = "<group>"; };
 		29B8F352187523510066950A /* Add.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Add.png; path = Graphics/Add.png; sourceTree = "<group>"; };
@@ -156,8 +159,19 @@
 		29B8F365187696B60066950A /* ClockHand.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ClockHand.png; path = Graphics/ClockHand.png; sourceTree = "<group>"; };
 		29B8F3671876B90A0066950A /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		29B8F36A1876B9BC0066950A /* Clockator.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Clockator.xcdatamodel; sourceTree = "<group>"; };
-		29B8F36C1876C6680066950A /* Geofence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Geofence.h; sourceTree = "<group>"; };
-		29B8F36D1876C6680066950A /* Geofence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Geofence.m; sourceTree = "<group>"; };
+		29B8F36C1876C6680066950A /* Geofence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Geofence.h; path = ../Geofence.h; sourceTree = "<group>"; };
+		29B8F36D1876C6680066950A /* Geofence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Geofence.m; path = ../Geofence.m; sourceTree = "<group>"; };
+		29B8F36F187758FB0066950A /* Refresh.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Refresh.png; path = Graphics/Refresh.png; sourceTree = "<group>"; };
+		29B8F3731877593E0066950A /* Settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Settings.png; path = Graphics/Settings.png; sourceTree = "<group>"; };
+		29B8F3771877B7690066950A /* Paris.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Paris.jpg; sourceTree = "<group>"; };
+		29B8F3791877B7990066950A /* NYC.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = NYC.jpg; sourceTree = "<group>"; };
+		29B8F37C1877FF560066950A /* Title.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Title.png; sourceTree = "<group>"; };
+		29B8F380187809840066950A /* DistProTh.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = DistProTh.otf; path = ../DistProTh.otf; sourceTree = "<group>"; };
+		29B8F38218781F260066950A /* BlurredNYC.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = BlurredNYC.png; path = Graphics/BlurredNYC.png; sourceTree = "<group>"; };
+		29B8F3841878AAAB0066950A /* Menu.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Menu.png; path = Graphics/Menu.png; sourceTree = "<group>"; };
+		29B8F3861878AEFD0066950A /* Clock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Clock.png; path = Graphics/Clock.png; sourceTree = "<group>"; };
+		29B8F3871878AEFD0066950A /* Globe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Globe.png; path = Graphics/Globe.png; sourceTree = "<group>"; };
+		29B8F3881878AEFD0066950A /* Marker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Marker.png; path = Graphics/Marker.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -171,7 +185,6 @@
 				298312671843216700F62170 /* CoreLocation.framework in Frameworks */,
 				2983129B184441D600F62170 /* libz.dylib in Frameworks */,
 				298312731843218C00F62170 /* SystemConfiguration.framework in Frameworks */,
-				298312711843218400F62170 /* StoreKit.framework in Frameworks */,
 				2983126F1843217F00F62170 /* Security.framework in Frameworks */,
 				2983126D1843217A00F62170 /* QuartzCore.framework in Frameworks */,
 				2983126B1843217400F62170 /* MobileCoreServices.framework in Frameworks */,
@@ -202,10 +215,6 @@
 		298311FF1840480A00F62170 = {
 			isa = PBXGroup;
 			children = (
-				29B8F3691876B9BC0066950A /* Clockator.xcdatamodeld */,
-				29B8F36C1876C6680066950A /* Geofence.h */,
-				29B8F36D1876C6680066950A /* Geofence.m */,
-				2912531F18703BA3001A77C6 /* marathon.gpx */,
 				298312111840480A00F62170 /* Clockator */,
 				298312301840480A00F62170 /* ClockatorTests */,
 				2983120A1840480A00F62170 /* Frameworks */,
@@ -231,7 +240,6 @@
 				2983129A184441D600F62170 /* libz.dylib */,
 				29831274184439E900F62170 /* FacebookSDK.framework */,
 				298312721843218C00F62170 /* SystemConfiguration.framework */,
-				298312701843218400F62170 /* StoreKit.framework */,
 				2983126E1843217F00F62170 /* Security.framework */,
 				2983126C1843217A00F62170 /* QuartzCore.framework */,
 				2983126A1843217400F62170 /* MobileCoreServices.framework */,
@@ -251,8 +259,6 @@
 		298312111840480A00F62170 /* Clockator */ = {
 			isa = PBXGroup;
 			children = (
-				2917E95F186A2F2000A46AD7 /* UIColor+customColours.h */,
-				2917E960186A2F2000A46AD7 /* UIColor+customColours.m */,
 				2983121D1840480A00F62170 /* Main.storyboard */,
 				2983121A1840480A00F62170 /* AppDelegate.h */,
 				2983121B1840480A00F62170 /* AppDelegate.m */,
@@ -260,6 +266,8 @@
 				29B8F35A1875FCB90066950A /* KeyConstants.m */,
 				293FD5DD186D584500F2CB61 /* AppKeys.h */,
 				293FD5DE186D585300F2CB61 /* AppKeys.m */,
+				2917E95F186A2F2000A46AD7 /* UIColor+customColours.h */,
+				2917E960186A2F2000A46AD7 /* UIColor+customColours.m */,
 				2983129F184449E800F62170 /* Controllers */,
 				298312A118444A1200F62170 /* Models */,
 				29B8F3641876670F0066950A /* Views */,
@@ -304,8 +312,6 @@
 			children = (
 				29B8F34718717A690066950A /* LoginViewController.h */,
 				29B8F34818717A690066950A /* LoginViewController.m */,
-				29B8F34A18717A7C0066950A /* UserInfoViewController.h */,
-				29B8F34B18717A7C0066950A /* UserInfoViewController.m */,
 				298312201840480A00F62170 /* ClockViewController.h */,
 				298312211840480A00F62170 /* ClockViewController.m */,
 				2917E8F41868052900A46AD7 /* SettingsViewController.h */,
@@ -314,8 +320,6 @@
 				2917E94D1869291E00A46AD7 /* GeofenceViewController.m */,
 				2917E95C18697D7600A46AD7 /* PlaceIconViewController.h */,
 				2917E95D18697D7600A46AD7 /* PlaceIconViewController.m */,
-				29921BC918662B1500443362 /* FBFindFriendsController.h */,
-				29921BCA18662B1600443362 /* FBFindFriendsController.m */,
 				29B8F34D1874B0EA0066950A /* FindFriendsViewController.h */,
 				29B8F34E1874B0EA0066950A /* FindFriendsViewController.m */,
 			);
@@ -325,9 +329,20 @@
 		298312A0184449FD00F62170 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				29B8F3861878AEFD0066950A /* Clock.png */,
+				29B8F3871878AEFD0066950A /* Globe.png */,
+				29B8F3881878AEFD0066950A /* Marker.png */,
+				29B8F3841878AAAB0066950A /* Menu.png */,
+				29B8F38218781F260066950A /* BlurredNYC.png */,
+				29B8F380187809840066950A /* DistProTh.otf */,
+				29B8F3791877B7990066950A /* NYC.jpg */,
+				29B8F3771877B7690066950A /* Paris.jpg */,
+				29B8F3731877593E0066950A /* Settings.png */,
+				29B8F36F187758FB0066950A /* Refresh.png */,
 				29B8F365187696B60066950A /* ClockHand.png */,
 				293FD5E3186EB2E900F2CB61 /* CurrentLocation.png */,
 				29B8F352187523510066950A /* Add.png */,
+				296D8800187BC94400A119BA /* userClockHand.png */,
 				29B8F354187536040066950A /* AddSelected.png */,
 				2917E95218696E1700A46AD7 /* Bar.png */,
 				2917E95318696E1700A46AD7 /* Home.png */,
@@ -338,6 +353,7 @@
 				2983125318405D7C00F62170 /* Clockator.sqlite */,
 				2983125C1840820000F62170 /* circle.png */,
 				2983125D1840820000F62170 /* hand.png */,
+				29B8F37C1877FF560066950A /* Title.png */,
 			);
 			name = Assets;
 			sourceTree = "<group>";
@@ -345,6 +361,9 @@
 		298312A118444A1200F62170 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				29B8F3691876B9BC0066950A /* Clockator.xcdatamodeld */,
+				29B8F36C1876C6680066950A /* Geofence.h */,
+				29B8F36D1876C6680066950A /* Geofence.m */,
 				29B8F35C1876432F0066950A /* CKFriend.h */,
 				29B8F35D1876432F0066950A /* CKFriend.m */,
 				2917E94F1869689100A46AD7 /* Place.h */,
@@ -411,6 +430,14 @@
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Sabrina Ren";
 				TargetAttributes = {
+					298312071840480A00F62170 = {
+						DevelopmentTeam = 4WF5RT836T;
+						SystemCapabilities = {
+							com.apple.InAppPurchase = {
+								enabled = 0;
+							};
+						};
+					};
 					298312281840480A00F62170 = {
 						TestTargetID = 298312071840480A00F62170;
 					};
@@ -441,21 +468,32 @@
 			buildActionMask = 2147483647;
 			files = (
 				2917E95A18696E1700A46AD7 /* School.png in Resources */,
+				29B8F38A1878AEFD0066950A /* Globe.png in Resources */,
+				296D8801187BC94400A119BA /* userClockHand.png in Resources */,
+				29B8F381187809840066950A /* DistProTh.otf in Resources */,
+				29B8F3851878AAAB0066950A /* Menu.png in Resources */,
 				293FD5E4186EB2E900F2CB61 /* CurrentLocation.png in Resources */,
 				2917E95818696E1700A46AD7 /* Home.png in Resources */,
+				29B8F37A1877B7990066950A /* NYC.jpg in Resources */,
 				2983124A18404F5200F62170 /* Channel_Slanted1.ttf in Resources */,
 				29B8F355187536040066950A /* AddSelected.png in Resources */,
 				298312241840480A00F62170 /* Images.xcassets in Resources */,
 				298312161840480A00F62170 /* InfoPlist.strings in Resources */,
 				29B8F353187523510066950A /* Add.png in Resources */,
+				29B8F3741877593E0066950A /* Settings.png in Resources */,
 				2983125E1840820000F62170 /* circle.png in Resources */,
+				29B8F370187758FB0066950A /* Refresh.png in Resources */,
+				29B8F38B1878AEFD0066950A /* Marker.png in Resources */,
+				29B8F37D1877FF560066950A /* Title.png in Resources */,
+				29B8F3781877B7690066950A /* Paris.jpg in Resources */,
+				29B8F3891878AEFD0066950A /* Clock.png in Resources */,
 				2917E95B18696E1700A46AD7 /* Work.png in Resources */,
 				2983125F1840820000F62170 /* hand.png in Resources */,
 				2917E95918696E1700A46AD7 /* Other.png in Resources */,
 				2983125418405D7C00F62170 /* Clockator.sqlite in Resources */,
+				29B8F38318781F260066950A /* BlurredNYC.png in Resources */,
 				2983121F1840480A00F62170 /* Main.storyboard in Resources */,
 				2917E95718696E1700A46AD7 /* Bar.png in Resources */,
-				2912532018703BA3001A77C6 /* marathon.gpx in Resources */,
 				29B8F366187696B60066950A /* ClockHand.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -479,11 +517,9 @@
 				29B8F34F1874B0EB0066950A /* FindFriendsViewController.m in Sources */,
 				29B8F36E1876C6680066950A /* Geofence.m in Sources */,
 				298312221840480A00F62170 /* ClockViewController.m in Sources */,
-				29921BCB18662B1600443362 /* FBFindFriendsController.m in Sources */,
 				2917E95E18697D7600A46AD7 /* PlaceIconViewController.m in Sources */,
 				29B8F363187666FC0066950A /* PopoverView.m in Sources */,
 				29B8F34918717A690066950A /* LoginViewController.m in Sources */,
-				29B8F34C18717A7C0066950A /* UserInfoViewController.m in Sources */,
 				2917E9511869689100A46AD7 /* Place.m in Sources */,
 				2917E94E1869291E00A46AD7 /* GeofenceViewController.m in Sources */,
 				29B8F36B1876B9BC0066950A /* Clockator.xcdatamodeld in Sources */,
@@ -620,6 +656,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/sabrinaren/Desktop/Clockator,
@@ -629,6 +667,7 @@
 				GCC_PREFIX_HEADER = "Clockator/Clockator-Prefix.pch";
 				INFOPLIST_FILE = "Clockator/Clockator-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -638,6 +677,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/sabrinaren/Desktop/Clockator,
@@ -647,6 +688,7 @@
 				GCC_PREFIX_HEADER = "Clockator/Clockator-Prefix.pch";
 				INFOPLIST_FILE = "Clockator/Clockator-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -733,7 +775,7 @@
 			);
 			currentVersion = 29B8F36A1876B9BC0066950A /* Clockator.xcdatamodel */;
 			path = Clockator.xcdatamodeld;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 			versionGroupType = wrapper.xcdatamodel;
 		};
 /* End XCVersionGroup section */

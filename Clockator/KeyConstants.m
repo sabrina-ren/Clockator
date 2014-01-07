@@ -23,10 +23,8 @@ NSString *const CKFriendReqFromUserKey = @"fromUser";
 NSString *const CKFriendReqToUserKey = @"toUser";
 NSString *const CKFriendReqStatusKey = @"status";
 
-#pragma mark - Remote Notifications
-NSString *const CKUserPrivateChannelKey = @"privateChannel";
-NSString *const CKInstallationChannelsKey = @"installationChannels";
-NSString *const CKInstallationUserKey = @"installationUser";
-NSString *const CKAPNSAlertKey = @"alert";
-NSString *const CKPayloadTypeKey = @"type";
-NSString *const CKPayloadFromUserKey = @"fromUser";
+#pragma mark - Notification Center
+NSString *const CKNotificationShouldLogOut = @"logOutNotification"; // Observers: AppDelegate and ClockViewController
+
+#pragma mark - NSUserDefaults
+NSString *const CKUserPreferencesClockFace = @"clockFacePreferences";

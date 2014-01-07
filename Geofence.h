@@ -11,7 +11,7 @@
 #import <CoreLocation/CoreLocation.h>
 
 
-@interface Geofence : NSManagedObject <NSCoding>
+@interface Geofence : NSManagedObject
 
 @property (nonatomic) CLCircularRegion *fenceRegion;
 @property (nonatomic) CLPlacemark *fencePlacemark;

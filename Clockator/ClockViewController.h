@@ -17,5 +17,6 @@
 @interface ClockViewController : UIViewController <CLLocationManagerDelegate, NSURLConnectionDelegate, SettingsControllerDelegate>
 
 @property (nonatomic) NSMutableArray *friendIds;
+@property BOOL shouldRefreshClock;
 
 @end

@@ -37,6 +37,12 @@
     [super viewDidLoad];
     self.sections = [NSMutableDictionary dictionary];
     self.sectionToFriendTypeMap = [NSMutableDictionary dictionary];
+    
+    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 20, 40)];
+    [titleLabel setFont:[UIFont fontWithName:@"DistrictPro-Thin" size:25]];
+    [titleLabel setTextColor:[UIColor whiteColor]];
+    [titleLabel setText:@"Friends"];
+    self.navigationItem.titleView = titleLabel;
 }
 - (void)didReceiveMemoryWarning
 {
@@ -147,22 +153,17 @@
             [friendRequesters addObject:user.objectId];
             [friendRequestObjects addObject:object];
         }
-        NSLog(@"requested friend count: %i", objects.count);
 
         // Get list of friends
         friends = [[PFUser currentUser] objectForKey:CKUserFriendsKey];
-        if (!friends) {
-            NSLog(@"No friends array");
-            friends = [[NSMutableArray alloc] init];
-        }
-        NSLog(@"Friends count:%i", friends.count);
+        if (!friends) friends = [[NSMutableArray alloc] init];
         
-        NSInteger requestSectionExists = 0;
-        NSInteger friendsSectionExists = 0;
+        int requestSectionExists = 0;
+        int friendsSectionExists = 0;
         if (friendRequesters.count > 0) requestSectionExists = 1;
         if (friends.count > 0) friendsSectionExists = 1;
         
-        NSInteger section;
+        int section;
         NSInteger rowIndex = 0;
         for (PFObject *object in self.objects) {
             NSString *friendType;
@@ -183,9 +184,8 @@
                 objectsInSection = [NSMutableArray array]; // New section
                 [sectionToFriendTypeMap setObject:friendType forKey:[NSNumber numberWithInt:section]];
             }
-            [objectsInSection addObject:[NSNumber numberWithInt:rowIndex++]];
+            [objectsInSection addObject:[NSNumber numberWithInteger:rowIndex++]];
             [sections setObject:objectsInSection forKey:friendType];
-//            NSLog(@"Objects num: %i in section: %i for type:%@", objectsInSection.count, section, friendType);
         }
         [self.tableView reloadData];
     }];

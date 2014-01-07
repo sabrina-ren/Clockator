@@ -53,19 +53,23 @@
 {
     [super viewDidLoad];
     
-    AppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
+    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     self.managedObjectContext = appDelegate.managedObjectContext;
     
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneButtonActionHandler:)];
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(doneButtonActionHandler:)];
     self.navigationItem.rightBarButtonItem = doneButton;
     
     resultsTableView.delegate = self;
     placesSearchBar.delegate = self;
     nameField.delegate = self;
     mapView.delegate = self;
-
+    
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 10, 40)];
+    [titleLabel setFont:[UIFont fontWithName:@"DistrictPro-Thin" size:25]];
     [titleLabel setTextColor:[UIColor whiteColor]];
+    
+    placesSearchBar.layer.borderWidth = 1;
+    placesSearchBar.layer.borderColor = [[UIColor whiteColor] CGColor];
     
     if (geoPlace) {
         titleLabel.text = geoPlace.fenceName;
@@ -162,6 +166,10 @@
     }
     else if (nameField.text.length > 0) [self showAlertWithTitle:@"Search for an address" fieldTag:0];
     else [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)backButtonActionHandler {
+    NSLog(@"back button");
 }
 
 #pragma mark - Search methods
@@ -392,7 +400,7 @@
 
 - (MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id<MKOverlay>)overlay {
     MKCircleRenderer *renderer = [[MKCircleRenderer alloc] initWithCircle:overlay];
-    renderer.fillColor = [UIColor customTransparentTurquoise];
+    renderer.fillColor = [UIColor customTransparentMapSalmon];
     return renderer;
 }
 
@@ -402,6 +410,10 @@
     NSLog(@"Index: %i", index);
     self.iconIndex = index;
     [iconButton setImage:[clockPlaces[self.iconIndex] placeIcon] forState:UIControlStateNormal];
+}
+
+- (void)didChangeClockFace {
+    // For use with settings controller
 }
 
 @end
