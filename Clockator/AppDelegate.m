@@ -13,15 +13,12 @@
 #import "UIColor+customColours.h"
 #import <Parse/Parse.h>
 
-
-@interface AppDelegate() 
-
+@interface AppDelegate()
 @property (nonatomic) ClockViewController *clockController;
 @property (nonatomic) LoginViewController *loginController;
 
 @property (nonatomic) NSMutableData *imageData;
 @property (nonatomic) NSString *userDisplayName;
-
 @end
 
 @implementation AppDelegate
@@ -65,15 +62,8 @@
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     loginController = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
     loginController.delegate = self;
+    loginController.isReachable = clockController.isReachable;
     [clockController presentViewController:loginController animated:animated completion:nil];
-}
-
-- (void)logUserOut {
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:CKUserPreferencesClockFace];
-
-    [PFUser logOut];
-    [clockController.navigationController popToRootViewControllerAnimated:NO];
-    [self presentLoginControllerAnimated:YES];
 }
 							
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -107,6 +97,14 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
     return [PFFacebookUtils handleOpenURL:url];
+}
+
+- (void)logUserOut {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:CKUserPreferencesClockFace];
+    
+    [PFUser logOut];
+    [clockController.navigationController popToRootViewControllerAnimated:NO];
+    [self presentLoginControllerAnimated:YES];
 }
 
 #pragma mark - Retrieve Facebook data

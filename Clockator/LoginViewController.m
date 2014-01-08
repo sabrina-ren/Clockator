@@ -8,6 +8,7 @@
 
 #import "LoginViewController.h"
 #import "ClockViewController.h"
+#import "Reachability.h"
 #import "UIColor+customColours.h"
 #import <Parse/Parse.h>
 
@@ -81,25 +82,31 @@
 }
 
 - (void)loginButtonTouchHandler:(id)sender {
-    [activityIndicator startAnimating];
-    
-    // Permissions requested
-    NSArray *permissionsArray = @[@"user_about_me",@"user_relationships"];
-    
-    // Login PFUser with Facebook
-    [PFFacebookUtils logInWithPermissions:permissionsArray block:^(PFUser *user, NSError *error){
-        if (!user) {
-            if (!error) {
-                NSLog(@"User cancelled Facebook login");
-            } else {
-                NSLog(@"Error occured: %@", error);
+    if (self.isReachable) {
+        [activityIndicator startAnimating];
+        
+        // Permissions requested
+        NSArray *permissionsArray = @[@"user_about_me",@"user_relationships"];
+        
+        // Login PFUser with Facebook
+        [PFFacebookUtils logInWithPermissions:permissionsArray block:^(PFUser *user, NSError *error){
+            if (!user) {
+                if (!error) {
+                    NSLog(@"User cancelled Facebook login");
+                } else {
+                    NSLog(@"Error occured: %@", error);
+                }
             }
-        }
-        else {
-            NSLog(@"User with Facebook is new: %i", user.isNew);
-            [self.delegate didLoginUserIsNew:user.isNew];
-        }
-    }];
+            else {
+                NSLog(@"User with Facebook is new: %i", user.isNew);
+                [self.delegate didLoginUserIsNew:user.isNew];
+            }
+        }];
+    }
+    else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [alert show];
+    }
 }
 
 - (void)displayUserInfo:(NSData *)imageData forUser:(NSString *)name {

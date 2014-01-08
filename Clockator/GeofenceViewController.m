@@ -10,6 +10,7 @@
 #import "PlaceIconViewController.h"
 #import "Geofence.h"
 #import "Place.h"
+#import "Reachability.h"
 #import "UIColor+customColours.h"
 #import <CoreLocation/CoreLocation.h>
 
@@ -94,6 +95,22 @@
     resultsTableView.hidden = YES;
     self.displayCurrent = YES;
     self.activityIndicator.hidesWhenStopped = YES;
+    
+    // Notification
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
+}
+
+- (void)reachabilityChanged:(NSNotification *)notification {
+    NSLog(@"Geofence View reachability changed");
+    Reachability *reach = (Reachability *)[notification object];
+    if ([reach isKindOfClass:[Reachability class]]) {
+        NetworkStatus status = [reach currentReachabilityStatus];
+        
+        if (status == NotReachable) {
+            self.isReachable = NO;
+        }
+        else self.isReachable = YES;
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -168,17 +185,16 @@
     else [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)backButtonActionHandler {
-    NSLog(@"back button");
-}
-
 #pragma mark - Search methods
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     [searchBar resignFirstResponder];
     
-    [self localSearch:searchBar.text showAlert:YES];
-    
+    if (self.isReachable) [self localSearch:searchBar.text showAlert:YES];
+    else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [alert show];
+    }
     self.placeChanged = YES;
 }
 
@@ -223,7 +239,7 @@
         NSLog(@"Text changed");
         self.displayCurrent = NO;
         resultsTableView.hidden = NO;
-        [self localSearch:searchText showAlert:NO];
+        if (self.isReachable) [self localSearch:searchText showAlert:NO];
     }
     else {
         NSLog(@"No text in bar");
@@ -304,19 +320,23 @@
 
     if (self.displayCurrent && indexPath.row==0) {
         if (currentLocation) {
-        [placesSearchBar setText:@"Current location"];
-        [self.activityIndicator startAnimating];
-        CLGeocoder * geoCoder = [[CLGeocoder alloc] init];
-        [geoCoder reverseGeocodeLocation:self.currentLocation completionHandler:^(NSArray *placemarks, NSError *error) {
-            if (error) {
-                NSLog(@"Geocoder error: %@", error.description);
-            } else {
+            [placesSearchBar setText:@"Current location"];
+            [self.activityIndicator startAnimating];
+            CLGeocoder * geoCoder = [[CLGeocoder alloc] init];
+            [geoCoder reverseGeocodeLocation:self.currentLocation completionHandler:^(NSArray *placemarks, NSError *error) {
                 [self.activityIndicator stopAnimating];
-                NSLog(@"reverse geocoding");
-                placemark = [placemarks firstObject];
-                [placesSearchBar setText:placemark.name];
-                [self showMap];
-            }
+                if (error) {
+                    NSLog(@"Geocoder error: %@", error.description);
+                    if (!self.isReachable) {
+                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                        [alert show];
+                    }
+                } else {
+                    NSLog(@"reverse geocoding");
+                    placemark = [placemarks firstObject];
+                    [placesSearchBar setText:placemark.name];
+                    [self showMap];
+                }
         }];
         }
         else [self showAlertWithTitle:@"Could not find location" fieldTag:-1];
@@ -336,33 +356,6 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
-    if (textField.tag == 0) {
-        MKLocalSearchRequest *request = [[MKLocalSearchRequest alloc] init];
-        request.naturalLanguageQuery = textField.text;
-        request.region = self.mapView.region;
-        
-        MKLocalSearch *search = [[MKLocalSearch alloc] initWithRequest:request];
-        [search startWithCompletionHandler:^(MKLocalSearchResponse *response, NSError *error) {
-            MKMapItem *item = [response.mapItems firstObject];
-            placemark = item.placemark;
-
-            if (placemark)[self showMap];
-            else {
-                [self showAlertWithTitle:@"Couldn't find location" fieldTag:0];
-            }
-        }];
-        
-        self.placeChanged = YES;
-    }
-    return YES;
-}
-
-- (BOOL)textFieldShouldClear:(UITextField *)textField {
-    if (textField.tag == 0) {
-        placemark = nil;
-        [mapView removeAnnotations:mapView.annotations];
-        [mapView removeOverlays:mapView.overlays];
-    }
     return YES;
 }
 

@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+@class Reachability;
+
 @protocol LoginControllerDelegate <NSObject>
 - (void)didLoginUserIsNew:(BOOL)isNew;
 - (void)shouldDismissLoginController;
@@ -15,6 +17,7 @@
 
 @interface LoginViewController : UIViewController
 
+@property BOOL isReachable;
 @property (nonatomic, weak) id <LoginControllerDelegate> delegate;
 
 - (void)displayUserInfo:(NSData *)imageData forUser:(NSString *)name;

@@ -29,6 +29,7 @@ typedef enum {
 @property (nonatomic) CLLocation *currentLocation;
 @property (nonatomic) NSMutableArray *clockPlaces;
 @property (nonatomic) NSMutableArray *geofences;
+@property BOOL isReachable;
 
 @property (nonatomic, weak) id <SettingsControllerDelegate> delegate;
 

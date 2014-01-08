@@ -22,6 +22,8 @@
 @property (nonatomic) NSMutableArray *clockPlaces;
 @property (nonatomic) CLLocation *currentLocation;
 @property (nonatomic) Geofence *geoPlace;
+@property BOOL isReachable;
+
 @property (nonatomic, weak) id <GeofenceControllerDelegate> delegate;
 
 @end

@@ -116,6 +116,7 @@
         geofenceController = [self.storyboard instantiateViewControllerWithIdentifier:@"GeofenceViewController"];
         geofenceController.clockPlaces = clockPlaces;
         geofenceController.currentLocation = self.currentLocation;
+        geofenceController.isReachable = self.isReachable;
         geofenceController.delegate = self;
         
         // If new place
@@ -164,7 +165,6 @@
 
 - (void)didUpdateCurrentLocation:(CLLocation *)newLocation {
     geofenceController.currentLocation = newLocation;
-    NSLog(@"YAY coordinates updated");
 }
 
 #pragma mark - MyPlaceViewController protocol

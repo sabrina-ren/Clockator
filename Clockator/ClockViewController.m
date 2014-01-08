@@ -13,14 +13,16 @@
 #import "KeyConstants.h"
 #import "LoginViewController.h"
 #import "Place.h"
+#import "Reachability.h"
 #import "SettingsViewController.h"
 #import <QuartzCore/QuartzCore.h>
-
 
 @interface ClockViewController ()
 @property (weak, nonatomic) IBOutlet UIImageView *clockCircle;
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic) SettingsViewController *settingsController;
+@property (nonatomic) Reachability *hostReachability;
+@property (nonatomic) Reachability *internetReachability;
 
 @property (nonatomic) CLLocationManager *locationManager;
 @property (nonatomic) CLLocation *currentLocation;
@@ -81,7 +83,10 @@
     myGeofences = [[NSMutableArray alloc] init];
     [self loadGeofences];
     
-    // Get default clock places
+    [self checkInternetConnection];
+    
+    // Logout Notification
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(clearGeofences) name:CKNotificationShouldLogOut object:nil];
     
     // Clear monitored locations
     for (CLRegion *oldRegion in locationManager.monitoredRegions) {
@@ -89,6 +94,7 @@
     }
     
     self.finishedLoadingFriends = NO;
+    self.isReachable = YES; // Assume connected until confirmed no
     
     [self loadShownClockPlaces];
     [self showLoadingClockHands];
@@ -96,9 +102,6 @@
     
     [self monitorRegions];
     [self updateLocation:nil];
-    
-    // Log out notification
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(clearCoreDataGeofences) name:CKNotificationShouldLogOut object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -142,7 +145,46 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Core data 
+#pragma mark - Reachability
+
+
+- (void)checkInternetConnection {
+    self.internetReachability = [Reachability reachabilityForInternetConnection];
+    [self.internetReachability startNotifier];
+    self.hostReachability = [Reachability reachabilityWithHostName:@"api.parse.com"];
+    [self.hostReachability startNotifier];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
+}
+
+- (void)reachabilityChanged:(NSNotification *)notification {
+    Reachability *reach = (Reachability *)[notification object];
+    if ([reach isKindOfClass:[Reachability class]]) {
+        NetworkStatus status = [reach currentReachabilityStatus];
+        
+        if (status == NotReachable) {
+            if (self.isReachable) { // If internet was previously available
+                NSLog(@"Clock view not reachable");
+                self.isReachable = NO;
+                
+                NSString *title = @"No Internet Connection";
+                NSString *message = @"Clock will be refreshed when reconnected";
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                [alert show];
+            }
+        }
+        else {
+            // Refresh if internet wasn't previously reachable
+            if (!self.isReachable)[self refreshButtonTouchHandler:nil];
+            self.isReachable = YES;
+        }
+        NSLog(@"Reachability changed to: %i", self.isReachable);
+        settingsController.isReachable = self.isReachable;
+        ((LoginViewController *)self.presentedViewController).isReachable = self.isReachable;
+    }
+}
+
+#pragma mark - Core data
 
 - (void)loadGeofences {
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
@@ -154,7 +196,10 @@
 }
 
 
-- (void)clearCoreDataGeofences {
+- (void)clearGeofences {    
+    for (CLRegion *oldRegion in locationManager.monitoredRegions) {
+        [locationManager stopMonitoringForRegion:oldRegion];
+    }
     for (Geofence *fence in geofences) {
         [self.managedObjectContext deleteObject:fence];
     }
@@ -183,7 +228,6 @@
         
         CGFloat x = 140 + locRadius*cos(angle*angleIndex + M_PI/2);
         CGFloat y = [UIScreen mainScreen].bounds.size.height/2 - 50 - locRadius*sin(angle*angleIndex + M_PI/2);
-        NSLog(@"view y: %f", [UIScreen mainScreen].bounds.size.height);
         
         UIView *placeV = [[UIView alloc] initWithFrame:CGRectMake(x,y,iconSize, iconSize)];
         UIImageView *imgV = [[UIImageView alloc] initWithImage:[clockPlaces[i] placeIcon]];
@@ -223,6 +267,7 @@
     settingsController.geofences = geofences;
     settingsController.currentLocation = locationManager.location;
     settingsController.friendIds = friendIds;
+    settingsController.isReachable = self.isReachable;
     settingsController.delegate = self;
     [self.navigationController pushViewController:settingsController animated:YES];
 }
@@ -257,14 +302,18 @@
     if (flag) NSLog(@"done");
     UIImageView *hand = [clockHands objectAtIndex:0];
     NSString *type = [anim valueForKey:@"type"];
+    
     if ([type isEqualToString:@"full"]) {
-        if (!self.finishedLoadingFriends)[self animateClockHand:hand fromAngle:0 toAngle:M_PI*2 forDuration:0.8 withKey:@"full"];
+        if (!self.isReachable) {
+            // Animation stops
+        }
+        else if (!self.finishedLoadingFriends)[self animateClockHand:hand fromAngle:0 toAngle:M_PI*2 forDuration:0.8 withKey:@"full"];
         
         else {
             [hand removeFromSuperview];
             [clockHands removeObjectAtIndex:0];
             NSLog(@"num angles:%i", handAngles.count);
-//            for (NSNumber *angle in handAngles) {
+
             for (int i=0; i<handAngles.count; i++) {
                 NSString *imageName = @"ClockHand";
                 if (i == self.userHandIndex) imageName = @"userClockHand";
@@ -295,29 +344,31 @@
 #pragma mark - Friends data
 
 - (void)loadFriends {
-    friendViews = [[NSMutableArray alloc] init];
-    
-    NSLog(@"Loading friends");
-    [[PFUser currentUser] setObject:@[@"pFPH4InwYa"] forKey:CKUserFriendsKey];
-    NSMutableArray *friendsIdList = [NSMutableArray arrayWithArray:[[PFUser currentUser] objectForKey:CKUserFriendsKey]];
-
-    if (!friendsIdList) friendsIdList = [[NSMutableArray alloc] init];
-    NSLog(@"num added friends: %i", friendsIdList.count);
-
-    if ([PFUser currentUser]) [friendsIdList addObject:[PFUser currentUser].objectId]; // Add current user to clock too
-    NSLog(@"num added friends now: %i", friendsIdList.count);
-    NSMutableArray *friends = [[NSMutableArray alloc] init];
-    
-    PFQuery *query = [PFUser query];
-    [query whereKey:CKUserObjectId containedIn:friendsIdList];
-     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-         if (!error) {
-             for (PFUser *user in objects) {
-             [friends addObject:user];
-             }
-             [self loadLocationsForFriends:friends];
-         }
-     }];
+    if (self.isReachable && [PFUser currentUser]) {
+        friendViews = [[NSMutableArray alloc] init];
+        
+        NSLog(@"Loading friends");
+        [[PFUser currentUser] setObject:@[@"pFPH4InwYa"] forKey:CKUserFriendsKey];
+        NSMutableArray *friendsIdList = [NSMutableArray arrayWithArray:[[PFUser currentUser] objectForKey:CKUserFriendsKey]];
+        
+        if (!friendsIdList) friendsIdList = [[NSMutableArray alloc] init];
+        NSLog(@"num added friends: %i", friendsIdList.count);
+        
+        if ([PFUser currentUser]) [friendsIdList addObject:[PFUser currentUser].objectId]; // Add current user to clock too
+        NSLog(@"num added friends now: %i", friendsIdList.count);
+        NSMutableArray *friends = [[NSMutableArray alloc] init];
+        
+        PFQuery *query = [PFUser query];
+        [query whereKey:CKUserObjectId containedIn:friendsIdList];
+        [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+            if (!error) {
+                for (PFUser *user in objects) {
+                    [friends addObject:user];
+                }
+                [self loadLocationsForFriends:friends];
+            }
+        }];
+    }
 }
 
 - (void)loadLocationsForFriends:(NSMutableArray *)friends {
@@ -386,6 +437,7 @@
         angleIndex++;
     }
     self.finishedLoadingFriends = YES;
+    
 }
 
 - (void)friendButtonTouchHandler:(id)sender {
@@ -423,7 +475,7 @@
 }
 
 - (void)updateLocation:(id)sender {
-    if ([PFUser currentUser]) {
+    if (self.isReachable && [PFUser currentUser]) {
         self.withinGeofences = NO;
         
         NSLog(@"Num monitored regions: %i", locationManager.monitoredRegions.count);
