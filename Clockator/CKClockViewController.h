@@ -1,20 +1,20 @@
 //
-//  ClockViewController.h
+//  CKClockViewController.h
 //  Clockator
 //
 //  Created by Sabrina Ren on 11/22/2013.
 //  Copyright (c) 2013 Sabrina Ren. All rights reserved.
 //
 
-#import "LoginViewController.h"
-#import "SettingsViewController.h"
+#import "CKLoginViewController.h"
+#import "CKSettingsViewController.h"
 #import <Parse/Parse.h>
 #import "PopoverView.h"
 #import <UIKit/UIKit.h>
 
-@class ClockViewController;
+@class CKClockViewController;
 
-@interface ClockViewController : UIViewController <CLLocationManagerDelegate, NSURLConnectionDelegate, SettingsControllerDelegate>
+@interface CKClockViewController : UIViewController <CLLocationManagerDelegate, NSURLConnectionDelegate, CKSettingsControllerDelegate>
 
 @property (nonatomic) NSMutableArray *friendIds;
 @property BOOL isReachable;

@@ -1,28 +1,26 @@
 //
-//  ClockViewController.m
+//  CKClockViewController.m
 //  Clockator
 //
 //  Created by Sabrina Ren on 11/22/2013.
 //  Copyright (c) 2013 Sabrina Ren. All rights reserved.
 //
 
-#import "ClockViewController.h"
-#import "AppDelegate.h"
+#import "CKClockViewController.h"
+#import "CKAppDelegate.h"
 #import "CKFriend.h"
-#import "Geofence.h"
-#import "KeyConstants.h"
-#import "LoginViewController.h"
-#import "Place.h"
+#import "CKGeofence.h"
+#import "CKAppConstants.h"
+#import "CKLoginViewController.h"
+#import "CKPlace.h"
 #import "Reachability.h"
-#import "SettingsViewController.h"
+#import "CKSettingsViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
-@interface ClockViewController ()
+@interface CKClockViewController ()
 @property (weak, nonatomic) IBOutlet UIImageView *clockCircle;
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
-@property (nonatomic) SettingsViewController *settingsController;
-@property (nonatomic) Reachability *hostReachability;
-@property (nonatomic) Reachability *internetReachability;
+@property (nonatomic) CKSettingsViewController *settingsController;
 
 @property (nonatomic) CLLocationManager *locationManager;
 @property (nonatomic) CLLocation *currentLocation;
@@ -39,12 +37,13 @@
 @property NSInteger numShownPlaces;
 @property double rotations;
 @property int userHandIndex;
+@property int rounds;
 @property BOOL didStartMonitoringRegion;
 @property BOOL withinGeofences;
 @property BOOL finishedLoadingFriends;
 @end
 
-@implementation ClockViewController
+@implementation CKClockViewController
 @synthesize friendsAtLocation, friendViews;
 @synthesize clockPlaces, iconViews, myGeofences, clockHands, handAngles, geofences, settingsController;
 @synthesize friendIds;
@@ -78,14 +77,16 @@
     UIBarButtonItem *refreshItem = [[UIBarButtonItem alloc] initWithCustomView:refreshButton];
     self.navigationItem.leftBarButtonItem = refreshItem;
     
-    AppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
+    CKAppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
     self.managedObjectContext = appDelegate.managedObjectContext;
     myGeofences = [[NSMutableArray alloc] init];
     [self loadGeofences];
     
-    [self checkInternetConnection];
-    
-    // Logout Notification
+    self.isReachable = YES; // Assume connected until confirmed no
+  
+    // Notification observers
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(clearGeofences) name:CKNotificationShouldLogOut object:nil];
     
     // Clear monitored locations
@@ -94,14 +95,12 @@
     }
     
     self.finishedLoadingFriends = NO;
-    self.isReachable = YES; // Assume connected until confirmed no
-    
     [self loadShownClockPlaces];
     [self showLoadingClockHands];
-    [self loadFriends];
+    [self refreshFriends];
     
     [self monitorRegions];
-    [self updateLocation:nil];
+//    [self updateLocation:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -134,7 +133,7 @@
         NSLog(@"Should refresh clock");
         self.shouldRefreshClock = NO;
         [self showLoadingClockHands];
-        [self loadFriends];
+        [self refreshFriends];
         [self updateLocation:nil];
     }
 }
@@ -147,40 +146,35 @@
 
 #pragma mark - Reachability
 
-
-- (void)checkInternetConnection {
-    self.internetReachability = [Reachability reachabilityForInternetConnection];
-    [self.internetReachability startNotifier];
-    self.hostReachability = [Reachability reachabilityWithHostName:@"api.parse.com"];
-    [self.hostReachability startNotifier];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
-}
-
 - (void)reachabilityChanged:(NSNotification *)notification {
     Reachability *reach = (Reachability *)[notification object];
     if ([reach isKindOfClass:[Reachability class]]) {
-        NetworkStatus status = [reach currentReachabilityStatus];
+        NetworkStatus internetStatus = [reach currentReachabilityStatus];
         
-        if (status == NotReachable) {
+        if (internetStatus == NotReachable) {
             if (self.isReachable) { // If internet was previously available
                 NSLog(@"Clock view not reachable");
-                self.isReachable = NO;
                 
                 NSString *title = @"No Internet Connection";
                 NSString *message = @"Clock will be refreshed when reconnected";
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
                 [alert show];
             }
+            self.isReachable = NO;
         }
         else {
-            // Refresh if internet wasn't previously reachable
-            if (!self.isReachable)[self refreshButtonTouchHandler:nil];
+            if (!self.isReachable){
+                self.isReachable = YES;
+                // Refresh if internet wasn't previously reachable
+                [self refreshButtonTouchHandler:nil];
+            }
+            currentLocation = locationManager.location;
+            [settingsController didUpdateCurrentLocation:currentLocation];
             self.isReachable = YES;
         }
         NSLog(@"Reachability changed to: %i", self.isReachable);
         settingsController.isReachable = self.isReachable;
-        ((LoginViewController *)self.presentedViewController).isReachable = self.isReachable;
+        ((CKLoginViewController *)self.presentedViewController).isReachable = self.isReachable;
     }
 }
 
@@ -188,19 +182,18 @@
 
 - (void)loadGeofences {
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Geofence" inManagedObjectContext:self.managedObjectContext];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"CKGeofence" inManagedObjectContext:self.managedObjectContext];
     [fetchRequest setEntity:entity];
     NSError *error;
     geofences = [NSMutableArray arrayWithArray:[self.managedObjectContext executeFetchRequest:fetchRequest error:&error]];
-    NSLog(@"Fetched geofences:%i", geofences.count);
+    NSLog(@"Fetched geofences:%lu", (unsigned long)geofences.count);
 }
-
 
 - (void)clearGeofences {    
     for (CLRegion *oldRegion in locationManager.monitoredRegions) {
         [locationManager stopMonitoringForRegion:oldRegion];
     }
-    for (Geofence *fence in geofences) {
+    for (CKGeofence *fence in geofences) {
         [self.managedObjectContext deleteObject:fence];
     }
     [self.managedObjectContext save:nil];
@@ -210,11 +203,11 @@
 #pragma mark - UI Behaviour
 
 - (void)loadShownClockPlaces {
-    clockPlaces = [Place getDefaultPlaces];
+    clockPlaces = [CKPlace getDefaultPlaces];
     iconViews = [NSMutableArray arrayWithCapacity:clockPlaces.count];
     
     numShownPlaces = 0;
-    for (Place *thisPlace in clockPlaces) {
+    for (CKPlace *thisPlace in clockPlaces) {
         if (thisPlace.isShown) numShownPlaces++;
     }
     double angle = 2*M_PI/numShownPlaces;
@@ -252,12 +245,13 @@
     // Remove old clock hands
     for (UIImageView *imageView in clockHands) {
         [imageView removeFromSuperview];
+//        [imageView.layer removeAllAnimations];
     }
     self.finishedLoadingFriends = NO;
     
     [self loadShownClockPlaces];
+    [self refreshFriends];
     [self showLoadingClockHands];
-    [self loadFriends];
     [self updateLocation:nil];
 }
 
@@ -281,6 +275,7 @@
     [self.view addSubview:newHand];
     [self.view sendSubviewToBack:newHand];
 
+    self.rounds = 0;
     [self animateClockHand:newHand fromAngle:0 toAngle:M_PI*2 forDuration:0.8 withKey:@"full"];
 }
 
@@ -299,76 +294,93 @@
 }
 
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
-    if (flag) NSLog(@"done");
-    UIImageView *hand = [clockHands objectAtIndex:0];
-    NSString *type = [anim valueForKey:@"type"];
-    
-    if ([type isEqualToString:@"full"]) {
-        if (!self.isReachable) {
-            // Animation stops
-        }
-        else if (!self.finishedLoadingFriends)[self animateClockHand:hand fromAngle:0 toAngle:M_PI*2 forDuration:0.8 withKey:@"full"];
+    if (flag) {
+        NSLog(@"Animation stopped");
+        self.rounds++;
+        UIImageView *hand = [clockHands objectAtIndex:0];
+        NSString *type = [anim valueForKey:@"type"];
         
-        else {
-            [hand removeFromSuperview];
-            [clockHands removeObjectAtIndex:0];
-            NSLog(@"num angles:%i", handAngles.count);
-
-            for (int i=0; i<handAngles.count; i++) {
-                NSString *imageName = @"ClockHand";
-                if (i == self.userHandIndex) imageName = @"userClockHand";
+        if ([type isEqualToString:@"full"]) {
+            if (!self.isReachable) {
+                // Animation stops
+            }
+            else if (self.rounds > 20) {
+                // Give up after 20 rounds
+                // Animation stops
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Could not connect" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                [alert show];
+            }
+            else if (!self.finishedLoadingFriends)[self animateClockHand:hand fromAngle:0 toAngle:M_PI*2 forDuration:0.8 withKey:@"full"];
+            else {
+                [hand removeFromSuperview];
+                [clockHands removeObjectAtIndex:0];
+                NSLog(@"num angles:%i", handAngles.count);
                 
-                UIImageView *newHand = [[UIImageView alloc] initWithImage:[UIImage imageNamed:imageName]];
-                CGRect screen = [[UIScreen mainScreen] bounds];
-                [newHand setFrame:CGRectMake(screen.size.width/4 - 10, screen.size.height/2 - 35, 180, 7)];
-                [clockHands addObject:newHand];
-                [self.view addSubview:newHand];
-                [self.view sendSubviewToBack:newHand];
-
-                [self animateClockHand:newHand fromAngle:0 toAngle:M_PI*2 - [handAngles[i] doubleValue] forDuration:0.4 withKey:@"partial"];
+                for (int i=0; i<handAngles.count; i++) {
+                    NSString *imageName = @"ClockHand";
+                    if (i == self.userHandIndex) imageName = @"userClockHand";
+                    
+                    UIImageView *newHand = [[UIImageView alloc] initWithImage:[UIImage imageNamed:imageName]];
+                    CGRect screen = [[UIScreen mainScreen] bounds];
+                    [newHand setFrame:CGRectMake(screen.size.width/4 - 10, screen.size.height/2 - 35, 180, 7)];
+                    [clockHands addObject:newHand];
+                    [self.view addSubview:newHand];
+                    if (i == self.userHandIndex) [self.view bringSubviewToFront:newHand];
+                    else [self.view sendSubviewToBack:newHand];
+                    
+                    [self animateClockHand:newHand fromAngle:0 toAngle:M_PI*2 - [handAngles[i] doubleValue] forDuration:0.4 withKey:@"partial"];
+                }
             }
         }
-    }
-    else {
-        for (UIButton *button in friendViews) {
-            [self.view addSubview:button];
-            button.alpha = 0.1;
-            [UIView beginAnimations:@"fadeIn" context:nil];
-            [UIView setAnimationDuration:0.2];
-            button.alpha = 1;
-            [UIView commitAnimations];
+        else {
+            for (UIButton *button in friendViews) {
+                [self.view addSubview:button];
+                button.alpha = 0.1;
+                [UIView beginAnimations:@"fadeIn" context:nil];
+                [UIView setAnimationDuration:0.2];
+                button.alpha = 1;
+                [UIView commitAnimations];
+            }
         }
     }
 }
 
 #pragma mark - Friends data
 
-- (void)loadFriends {
+- (void)refreshFriends {
+
     if (self.isReachable && [PFUser currentUser]) {
-        friendViews = [[NSMutableArray alloc] init];
-        
-        NSLog(@"Loading friends");
-        [[PFUser currentUser] setObject:@[@"pFPH4InwYa"] forKey:CKUserFriendsKey];
-        NSMutableArray *friendsIdList = [NSMutableArray arrayWithArray:[[PFUser currentUser] objectForKey:CKUserFriendsKey]];
-        
-        if (!friendsIdList) friendsIdList = [[NSMutableArray alloc] init];
-        NSLog(@"num added friends: %i", friendsIdList.count);
-        
-        if ([PFUser currentUser]) [friendsIdList addObject:[PFUser currentUser].objectId]; // Add current user to clock too
-        NSLog(@"num added friends now: %i", friendsIdList.count);
-        NSMutableArray *friends = [[NSMutableArray alloc] init];
-        
-        PFQuery *query = [PFUser query];
-        [query whereKey:CKUserObjectId containedIn:friendsIdList];
-        [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-            if (!error) {
-                for (PFUser *user in objects) {
-                    [friends addObject:user];
-                }
-                [self loadLocationsForFriends:friends];
-            }
-        }];
+        [[PFUser currentUser] refreshInBackgroundWithTarget:self selector:@selector(loadFriends)];
     }
+}
+
+- (void)loadFriends {
+    friendViews = [[NSMutableArray alloc] init];
+    
+    NSLog(@"Loading friends");
+    PFUser *user = [PFUser currentUser];
+    NSMutableArray *friendsIdList = [[NSMutableArray alloc] init];
+    friendsIdList = user[@"friends"];
+    
+    if (!friendsIdList) friendsIdList = [[NSMutableArray alloc] init];
+    NSLog(@"num added friends: %i", friendsIdList.count);
+    
+    NSMutableArray *allUsers = [NSMutableArray arrayWithArray:friendsIdList];
+    
+    [allUsers addObject:[PFUser currentUser].objectId]; // Add current user to clock too
+    NSMutableArray *friends = [[NSMutableArray alloc] init];
+    
+    PFQuery *query = [PFUser query];
+    [query whereKey:CKUserObjectId containedIn:allUsers];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {
+            for (PFUser *user in objects) {
+                [friends addObject:user];
+            }
+            [self loadLocationsForFriends:friends];
+        }
+    }];
+    
 }
 
 - (void)loadLocationsForFriends:(NSMutableArray *)friends {
@@ -384,7 +396,7 @@
         friend.profile = [UIImage imageWithData:[friendUser objectForKey:CKUserProfileKey]];
         NSString *indexString = [friendUser objectForKey:CKUserIconKey];
         if (indexString) friend.iconIndex = [indexString intValue];
-        else friend.iconIndex = 4;
+        else friend.iconIndex = clockPlaces.count-1;
         friend.updatedAt = [friendUser objectForKey:CKUserUpdateDateKey];
         // Sort friends by icon
         NSMutableArray *friendsAtIndex = friendsAtLocation[friend.iconIndex];
@@ -450,7 +462,9 @@
     
     CKFriend *locatedFriend = [friendsAtLocation[locationIndex] objectAtIndex:friendIndex];
     CGPoint point = CGPointMake(button.frame.origin.x + 25, button.frame.origin.y - 5);
-    NSString *text = [NSString stringWithFormat:@"%@\n%@ %@", locatedFriend.displayName, locatedFriend.location, locatedFriend.locationUpdatedAt];
+    NSString *locationName = locatedFriend.location;
+    if (!locationName) locationName = @"Unknown";
+    NSString *text = [NSString stringWithFormat:@"%@\n%@ %@", locatedFriend.displayName, locationName, locatedFriend.locationUpdatedAt];
     [PopoverView showPopoverAtPoint:point inView:self.view withText:text delegate:nil];
 }
 
@@ -465,7 +479,7 @@
 }
 
 - (void)monitorRegions {
-    for (Geofence *place in geofences) {
+    for (CKGeofence *place in geofences) {
         [locationManager startMonitoringForRegion:place.fenceRegion];
     }
 }
@@ -479,9 +493,9 @@
         self.withinGeofences = NO;
         
         NSLog(@"Num monitored regions: %i", locationManager.monitoredRegions.count);
-        if (locationManager.monitoredRegions.count == 0) [self shareLocation:@"Unknown" iconIndex:@"4"];
-        
-        for (Geofence *place in geofences) {
+        if (locationManager.monitoredRegions.count == 0) [self shareLocation:@"Unknown" iconIndex:[NSString stringWithFormat:@"%i", clockPlaces.count-1]];
+
+        for (CKGeofence *place in geofences) {
             [locationManager requestStateForRegion:place.fenceRegion];
         }
     }
@@ -508,10 +522,10 @@
     else if (state == CLRegionStateOutside) {
         NSLog(@"Is outside region %@", region.identifier);
         
-        CLCircularRegion *lastRegion = [[myGeofences lastObject] fenceRegion];
+        CLCircularRegion *lastRegion = [[geofences lastObject] fenceRegion];
         if ([region isEqual:lastRegion] && self.withinGeofences == NO) {
             NSLog(@"Is outside all geofences");
-            [self shareLocation:@"Other" iconIndex:@"4"];
+            [self shareLocation:@"Other" iconIndex:[NSString stringWithFormat:@"%i", clockPlaces.count-1]];
         }
     }
     else if (state == CLRegionStateUnknown) {
@@ -550,8 +564,8 @@
 
 - (void)shareLocation:(NSString *)name iconIndex:(NSString *)index {
     if ([PFUser currentUser]) {
-        [[PFUser currentUser] setObject:name forKey:@"location"];
-        [[PFUser currentUser] setObject:index forKey:@"iconIndex"];
+        [[PFUser currentUser] setObject:name forKey:CKUserLocationKey];
+        [[PFUser currentUser] setObject:index forKey:CKUserIconKey];
         [[PFUser currentUser] setObject:[NSDate date] forKey:CKUserUpdateDateKey];
         [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (succeeded) NSLog(@"Save succeeded");
@@ -561,7 +575,7 @@
 
 #pragma mark - SetingsViewController protocol
 
-- (void)didUpdateGeofence:(Geofence *)geofence changeType:(ChangeType)type {
+- (void)didUpdateGeofence:(CKGeofence *)geofence changeType:(ChangeType)type {
     if (type == deletedPlace || type == changedPlace) {
         [locationManager stopMonitoringForRegion:geofence.fenceRegion];
         if (type == deletedPlace) [self.managedObjectContext deleteObject:geofence];
@@ -570,8 +584,9 @@
         [locationManager startMonitoringForRegion:geofence.fenceRegion];
     }
     [self.managedObjectContext save:nil];
-
     NSLog(@"Did update num monitored regions: %i", locationManager.monitoredRegions.count);
+    
+    self.shouldRefreshClock = YES;
 }
 
 - (void)didChangeClockFace {

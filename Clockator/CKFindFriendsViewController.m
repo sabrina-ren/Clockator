@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Sabrina Ren. All rights reserved.
 //
 
-#import "FindFriendsViewController.h"
-#import "KeyConstants.h"
+#import "CKFindFriendsViewController.h"
+#import "CKAppConstants.h"
 
-@interface FindFriendsViewController ()
+@interface CKFindFriendsViewController ()
 
 @property (nonatomic) NSMutableDictionary *sections;
 @property (nonatomic) NSMutableDictionary *sectionToFriendTypeMap;
@@ -19,7 +19,7 @@
 
 @end
 
-@implementation FindFriendsViewController
+@implementation CKFindFriendsViewController
 @synthesize sections, sectionToFriendTypeMap, friendRequesters, friendRequestObjects, friends;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -54,7 +54,7 @@
     PFQuery *friendQuery = [PFUser query];
     
     // Use cached data if none loaded
-    if (!self.friendIds) self.friendIds = [[NSUserDefaults standardUserDefaults] objectForKey:@"friendIds"];
+    if (!self.friendIds) self.friendIds = [[NSUserDefaults standardUserDefaults] objectForKey:CKUserPreferencesFriendsIds];
     [friendQuery whereKey:@"fbID" containedIn:self.friendIds];
     
     return friendQuery;
@@ -132,12 +132,6 @@
     
     [self.sections removeAllObjects]; // Index of all objects in sections
     [self.sectionToFriendTypeMap removeAllObjects];
-    
-    
-
-//
-//    NSLog(@"friends count:%i", friends.count);
-//
     
     friendRequesters = [[NSMutableArray alloc] init]; // Users
     friendRequestObjects = [[NSMutableArray alloc] init]; // FriendRequest objects
@@ -249,23 +243,6 @@
     [friends addObject:newFriend.objectId];
     [[PFUser currentUser] setObject:friends forKey:CKUserFriendsKey];
     [[PFUser currentUser] saveEventually:^(BOOL succeeded, NSError *error) {
-        
-        // Remote notification
-//        NSString *privateChannelName = [newFriend objectForKey:CKUserPrivateChannelKey];
-//        if (privateChannelName && privateChannelName.length > 0) {
-//            NSString *userName = [[PFUser currentUser] objectForKey:CKUserDisplayNameKey];
-//            NSString *message = [NSString stringWithFormat:@"%@ accepted your friend request", userName];
-//            NSDictionary *payload = [NSDictionary dictionaryWithObjectsAndKeys:message, CKAPNSAlertKey, @"accepted", CKPayloadTypeKey, [PFUser currentUser].objectId, CKPayloadFromUserKey, nil];
-//            
-//            PFPush *push = [[PFPush alloc] init];
-//            [push setChannel:privateChannelName];
-//            [push setData:payload];
-//            [push sendPushInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-//                NSLog(@"Remote push notification succeeded: %i", succeeded);
-//                if (error) NSLog(@"Error: %@", error);
-//            }];
-//        }
-        
         [self loadObjects];
         [self.tableView reloadData];
     }];
@@ -290,13 +267,13 @@
     NSNumber *angle = [NSNumber numberWithFloat:M_PI/4];
     
     if (!button.selected) {
-        NSLog(@"Unfollow");
+        NSLog(@"Unfriend");
         rotation.fromValue = angle;
         rotation.toValue = [NSNumber numberWithFloat:0];
         [self cancelFriendRequestTo:user];
     }
     else {
-        NSLog(@"Follow");
+        NSLog(@"Friend");
         rotation.toValue = angle;
         [self sendFriendRequestTo:user block:^(BOOL succeeded, NSError *error) {
             NSLog(@"Send friend request succeeded: %i", succeeded);

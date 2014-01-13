@@ -1,5 +1,5 @@
 //
-//  Geofence.h
+//  CKGeofence.h
 //  Clockator
 //
 //  Created by Sabrina Ren on 1/3/2014.
@@ -11,7 +11,7 @@
 #import <CoreLocation/CoreLocation.h>
 
 
-@interface Geofence : NSManagedObject
+@interface CKGeofence : NSManagedObject
 
 @property (nonatomic) CLCircularRegion *fenceRegion;
 @property (nonatomic) CLPlacemark *fencePlacemark;

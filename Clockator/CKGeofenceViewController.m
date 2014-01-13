@@ -5,16 +5,16 @@
 //  Created by Sabrina Ren on 12/23/2013.
 //  Copyright (c) 2013 Sabrina Ren. All rights reserved.
 //
-#import "GeofenceViewController.h"
-#import "AppDelegate.h"
-#import "PlaceIconViewController.h"
-#import "Geofence.h"
-#import "Place.h"
+#import "CKGeofenceViewController.h"
+#import "CKAppDelegate.h"
+#import "CKPlaceIconViewController.h"
+#import "CKGeofence.h"
+#import "CKPlace.h"
 #import "Reachability.h"
-#import "UIColor+customColours.h"
+#import "UIColor+CKColours.h"
 #import <CoreLocation/CoreLocation.h>
 
-@interface GeofenceViewController ()
+@interface CKGeofenceViewController ()
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 @property (weak, nonatomic) IBOutlet UIButton *iconButton;
@@ -37,7 +37,7 @@
 @property double radius;
 @end
 
-@implementation GeofenceViewController
+@implementation CKGeofenceViewController
 @synthesize clockPlaces, currentLocation, geoPlace;
 @synthesize mapView, iconButton, placesSearchBar, resultsTableView, nameField;
 @synthesize placemark, searchResults, coords;
@@ -54,7 +54,7 @@
 {
     [super viewDidLoad];
     
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    CKAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     self.managedObjectContext = appDelegate.managedObjectContext;
     
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(doneButtonActionHandler:)];
@@ -96,21 +96,8 @@
     self.displayCurrent = YES;
     self.activityIndicator.hidesWhenStopped = YES;
     
-    // Notification
+    // Notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
-}
-
-- (void)reachabilityChanged:(NSNotification *)notification {
-    NSLog(@"Geofence View reachability changed");
-    Reachability *reach = (Reachability *)[notification object];
-    if ([reach isKindOfClass:[Reachability class]]) {
-        NetworkStatus status = [reach currentReachabilityStatus];
-        
-        if (status == NotReachable) {
-            self.isReachable = NO;
-        }
-        else self.isReachable = YES;
-    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -121,6 +108,17 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     NSLog(@"View appeared");
+}
+
+#pragma mark - Reachability
+
+- (void)reachabilityChanged:(NSNotification *)notification {
+    Reachability *reach = (Reachability *)[notification object];
+    if ([reach isKindOfClass:[Reachability class]]) {
+        NetworkStatus status = [reach currentReachabilityStatus];
+        if (status == NotReachable) self.isReachable = NO;
+        else self.isReachable = YES;
+    }
 }
 
 #pragma mark - UI Behaviour
@@ -135,7 +133,7 @@
 }
 
 - (IBAction)chooseIcon:(id)sender {
-    PlaceIconViewController *iconController = (PlaceIconViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"PlaceIconViewController"];
+    CKPlaceIconViewController *iconController = (CKPlaceIconViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"PlaceIconViewController"];
     iconController.delegate = self;
     iconController.clockPlaces = self.clockPlaces;
     iconController.isIconView = YES;
@@ -167,7 +165,7 @@
     if (placemark) {
         BOOL isNew = YES;
         if (geoPlace) isNew = NO;
-        else geoPlace = [NSEntityDescription insertNewObjectForEntityForName:@"Geofence" inManagedObjectContext:self.managedObjectContext];
+        else geoPlace = [NSEntityDescription insertNewObjectForEntityForName:@"CKGeofence" inManagedObjectContext:self.managedObjectContext];
         
         geoPlace.fenceRegion = region;
         geoPlace.fencePlacemark = placemark;
@@ -191,10 +189,7 @@
     [searchBar resignFirstResponder];
     
     if (self.isReachable) [self localSearch:searchBar.text showAlert:YES];
-    else {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alert show];
-    }
+    else [self showAlertWithTitle:@"No internet connection" fieldTag:-1];
     self.placeChanged = YES;
 }
 
@@ -318,26 +313,25 @@
     [placesSearchBar resignFirstResponder];
     NSLog(@"Did select: Map items count: %i", searchResults.mapItems.count);
 
-    if (self.displayCurrent && indexPath.row==0) {
-        if (currentLocation) {
-            [placesSearchBar setText:@"Current location"];
-            [self.activityIndicator startAnimating];
-            CLGeocoder * geoCoder = [[CLGeocoder alloc] init];
-            [geoCoder reverseGeocodeLocation:self.currentLocation completionHandler:^(NSArray *placemarks, NSError *error) {
-                [self.activityIndicator stopAnimating];
-                if (error) {
-                    NSLog(@"Geocoder error: %@", error.description);
-                    if (!self.isReachable) {
-                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-                        [alert show];
+    if (self.displayCurrent && indexPath.row==0) { // Current location
+        if (!self.isReachable) [self showAlertWithTitle:@"No internet connection" fieldTag:-1];
+        else if (currentLocation) {
+                [placesSearchBar setText:@"Current location"];
+                [self.activityIndicator startAnimating];
+                CLGeocoder * geoCoder = [[CLGeocoder alloc] init];
+                [geoCoder reverseGeocodeLocation:self.currentLocation completionHandler:^(NSArray *placemarks, NSError *error) {
+                    [self.activityIndicator stopAnimating];
+                    if (error) {
+                        NSLog(@"Geocoder error: %@", error.description);
+                        [self showAlertWithTitle:@"Could not connect" fieldTag:-1];
                     }
-                } else {
-                    NSLog(@"reverse geocoding");
-                    placemark = [placemarks firstObject];
-                    [placesSearchBar setText:placemark.name];
-                    [self showMap];
-                }
-        }];
+                    else {
+                        NSLog(@"Reverse geocoding");
+                        placemark = [placemarks firstObject];
+                        [placesSearchBar setText:placemark.name];
+                        [self showMap];
+                    }
+                }];
         }
         else [self showAlertWithTitle:@"Could not find location" fieldTag:-1];
     }
@@ -399,7 +393,7 @@
 
 #pragma mark - ClockPlacesSettingsController protocol method
 
-- (void)placeIconController:(PlaceIconViewController *)controller didChangeIconIndex:(NSInteger)index {
+- (void)placeIconController:(CKPlaceIconViewController *)controller didChangeIconIndex:(NSInteger)index {
     NSLog(@"Index: %i", index);
     self.iconIndex = index;
     [iconButton setImage:[clockPlaces[self.iconIndex] placeIcon] forState:UIControlStateNormal];

@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Sabrina Ren. All rights reserved.
 //
 
-#import "Place.h"
-#import "KeyConstants.h"
+#import "CKPlace.h"
+#import "CKAppConstants.h"
 
-@implementation Place
+@implementation CKPlace
 
 @synthesize placeName, placeIcon, placeIndex, isShown;
 
@@ -17,17 +17,17 @@
     NSArray *shownPreferences = [[NSUserDefaults standardUserDefaults] arrayForKey:CKUserPreferencesClockFace];
     if (!shownPreferences) {
         NSLog(@"No shown preferences");
-        shownPreferences = @[@1,@1,@1,@1,@1];
+        shownPreferences = @[@0,@1,@1,@1,@1,@1];
         [[NSUserDefaults standardUserDefaults] setObject:shownPreferences forKey:CKUserPreferencesClockFace];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
     
-    NSArray *names = @[@"Bar", @"Home", @"School", @"Work", @"Other"];
+    NSArray *names = @[@"Bar", @"Cafe", @"Home", @"School", @"Work", @"Other"];
     
     NSMutableArray *defaultPlaces = [[NSMutableArray alloc] init];
 
     for (int i=0; i<names.count; i++) {
-        Place *newPlace = [[Place alloc] initWithName:names[i] icon:[UIImage imageNamed:[names[i] stringByAppendingPathExtension:@"png"]]];
+        CKPlace *newPlace = [[CKPlace alloc] initWithName:names[i] icon:[UIImage imageNamed:[names[i] stringByAppendingPathExtension:@"png"]]];
         newPlace.placeIndex = i;
         
         newPlace.isShown = [shownPreferences[i] boolValue];

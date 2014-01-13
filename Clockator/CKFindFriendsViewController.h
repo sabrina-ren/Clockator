@@ -8,7 +8,7 @@
 
 #import <Parse/Parse.h>
 
-@interface FindFriendsViewController : PFQueryTableViewController
+@interface CKFindFriendsViewController : PFQueryTableViewController
 
 @property (nonatomic) NSArray *friendIds;
 

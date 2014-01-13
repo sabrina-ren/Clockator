@@ -1,18 +1,18 @@
 //
-//  LoginViewController.m
+//  CKLoginViewController.m
 //  Clockator
 //
 //  Created by Sabrina Ren on 11/25/2013.
 //  Copyright (c) 2013 Sabrina Ren. All rights reserved.
 //
 
-#import "LoginViewController.h"
-#import "ClockViewController.h"
+#import "CKLoginViewController.h"
+#import "CKClockViewController.h"
 #import "Reachability.h"
-#import "UIColor+customColours.h"
+#import "UIColor+CKColours.h"
 #import <Parse/Parse.h>
 
-@interface LoginViewController ()
+@interface CKLoginViewController ()
 
 @property (weak, nonatomic) IBOutlet UIImageView *blurredBackground;
 
@@ -22,7 +22,7 @@
 
 @end
 
-@implementation LoginViewController
+@implementation CKLoginViewController
 @synthesize blurredBackground, loginButton, activityIndicator;
 @synthesize clockatorLabel;
 
@@ -96,6 +96,9 @@
                 } else {
                     NSLog(@"Error occured: %@", error);
                 }
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error logging in" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                [alert show];
+                [activityIndicator stopAnimating];
             }
             else {
                 NSLog(@"User with Facebook is new: %i", user.isNew);
@@ -158,7 +161,7 @@
     [self.view addSubview:introView];
     
     // Labels
-    NSArray *labelText = @[@"See friends' locations on clock", @"Set up places to share", @"If you're at a saved place, your location is updated"];
+    NSArray *labelText = @[@"See friends' locations on clock", @"Add places to share", @"If you're at a saved place, your location is updated"];
     CGFloat labelHeight = 56;
     CGFloat space = introView.frame.size.height/labelText.count - labelHeight/labelText.count;
 

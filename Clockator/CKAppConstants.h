@@ -1,5 +1,5 @@
 //
-//  KeyConstants.h
+//  CKAppConstants.h
 //  Clockator
 //
 //  Created by Sabrina Ren on 1/2/2014.
@@ -7,11 +7,12 @@
 //
 
 #pragma mark - PFUser
-extern NSString *const CKUserObjectId;
 extern NSString *const CKUserDisplayNameKey;
+extern NSString *const CKUserFacebookKey;
 extern NSString *const CKUserFriendsKey;
-extern NSString *const CKUserLocationKey;
 extern NSString *const CKUserIconKey;
+extern NSString *const CKUserLocationKey;
+extern NSString *const CKUserObjectId;
 extern NSString *const CKUserProfileKey;
 extern NSString *const CKUserUpdateDateKey;
 
@@ -26,3 +27,4 @@ extern NSString *const CKNotificationShouldLogOut;
 
 #pragma mark - NSUserDefaults
 extern NSString *const CKUserPreferencesClockFace;
+extern NSString *const CKUserPreferencesFriendsIds;

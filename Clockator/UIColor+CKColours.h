@@ -1,5 +1,5 @@
 //
-//  UIColor+customColours.h
+//  UIColor+CKColours.h
 //  Clockator
 //
 //  Created by Sabrina Ren on 12/24/2013.
@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UIColor (customColours)
+@interface UIColor (CKColours)
 
 + (UIColor *)customSalmon;
 + (UIColor *)customLightSalmon;

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Place : NSObject
+@interface CKPlace : NSObject
 
 @property (nonatomic) NSString *placeName;
 @property (nonatomic) UIImage *placeIcon;

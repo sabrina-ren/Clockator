@@ -6,22 +6,24 @@
 //  Copyright (c) 2013 Sabrina Ren. All rights reserved.
 //
 
-#import "AppDelegate.h"
-#import "AppKeys.h"
-#import "ClockViewController.h"
-#import "KeyConstants.h"
-#import "UIColor+customColours.h"
+#import "CKAppDelegate.h"
+#import "CKAppKeys.h"
+#import "CKClockViewController.h"
+#import "CKAppConstants.h"
+#import "Reachability.h"
+#import "UIColor+CKColours.h"
 #import <Parse/Parse.h>
 
-@interface AppDelegate()
-@property (nonatomic) ClockViewController *clockController;
-@property (nonatomic) LoginViewController *loginController;
+@interface CKAppDelegate()
+@property (nonatomic) CKClockViewController *clockController;
+@property (nonatomic) CKLoginViewController *loginController;
 
 @property (nonatomic) NSMutableData *imageData;
 @property (nonatomic) NSString *userDisplayName;
+@property (nonatomic, strong) Reachability *internetReachability;
 @end
 
-@implementation AppDelegate
+@implementation CKAppDelegate
 @synthesize clockController,loginController;
 @synthesize  managedObjectContext = _managedObjectContext;
 @synthesize managedObjectModel = _managedObjectModel;
@@ -42,6 +44,9 @@
     self.window.rootViewController = navController;
     [self.window makeKeyAndVisible];
     
+    self.internetReachability = [Reachability reachabilityForInternetConnection];
+    [self.internetReachability startNotifier];
+    
     if (!([PFUser currentUser] && [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]])) {
         // New user
         [self presentLoginControllerAnimated:NO];
@@ -54,7 +59,7 @@
     };
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logUserOut) name:CKNotificationShouldLogOut object:nil];
-    
+
     return YES;
 }
 
@@ -87,6 +92,11 @@
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     [FBSession.activeSession handleDidBecomeActive];
+    [self recheckInternetConnection];
+}
+
+- (void)recheckInternetConnection {
+    [[NSNotificationCenter defaultCenter] postNotificationName:kReachabilityChangedNotification object:self.internetReachability];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -101,7 +111,9 @@
 
 - (void)logUserOut {
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:CKUserPreferencesClockFace];
-    
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:CKUserPreferencesFriendsIds];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
     [PFUser logOut];
     [clockController.navigationController popToRootViewControllerAnimated:NO];
     [self presentLoginControllerAnimated:YES];
@@ -121,10 +133,10 @@
                 [friendIds addObject:friendObject[@"id"]];
             }
 
-            [[NSUserDefaults standardUserDefaults] setObject:friendIds forKey:@"friendIds"];
+            [[NSUserDefaults standardUserDefaults] setObject:friendIds forKey:CKUserPreferencesFriendsIds];
             [[NSUserDefaults standardUserDefaults] synchronize];
 
-            NSLog(@"facebook id: %@", [[PFUser currentUser] objectForKey:@"fbID"]);
+            NSLog(@"facebook id: %@", [[PFUser currentUser] objectForKey:CKUserFacebookKey]);
             NSLog(@"Friend id count: %lu", (unsigned long)friendIds.count);
             clockController.friendIds = friendIds;
         }
@@ -143,8 +155,8 @@
             NSString *facebookID = userData[@"id"];
             self.userDisplayName = userData[@"name"];
             
-            [[PFUser currentUser] setObject:facebookID forKey:@"fbID"];
-            [[PFUser currentUser] setObject:self.userDisplayName forKey:@"displayName"];
+            [[PFUser currentUser] setObject:facebookID forKey:CKUserFacebookKey];
+            [[PFUser currentUser] setObject:self.userDisplayName forKey:CKUserDisplayNameKey];
             [[PFUser currentUser] saveInBackground];
             
             //            userNameLabel.text = name;
@@ -175,7 +187,7 @@
 - (void)connectionDidFinishLoading:(NSURLConnection*)connection {
     NSLog(@"saved profile picture");
     if ([PFUser currentUser]) {
-        [[PFUser currentUser] setObject:self.imageData forKey:@"profilePicture"];
+        [[PFUser currentUser] setObject:self.imageData forKey:CKUserProfileKey];
         [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (error) NSLog(@"image save error: %@", error);
             if (succeeded) NSLog(@"succeeded: %i", succeeded);
@@ -210,7 +222,7 @@
     }];
 }
 
-#pragma mark - LoginViewController protocol method
+#pragma mark - CKLoginViewController protocol method
 
 - (void)didLoginUserIsNew:(BOOL)isNew {
     [self refreshBasicFacebookData];
@@ -221,6 +233,8 @@
     clockController.shouldRefreshClock = YES;
     [clockController dismissViewControllerAnimated:YES completion:nil];
 }
+
+#pragma mark - Core Data
 
 - (void)saveContext
 {
@@ -234,8 +248,6 @@
         }
     }
 }
-
-#pragma mark - Core Data stack
 
 // Returns the managed object context for the application.
 // If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.

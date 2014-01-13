@@ -1,27 +1,27 @@
 //
-//  SettingsViewController.m
+//  CKSettingsViewController.m
 //  Clockator
 //
 //  Created by Sabrina Ren on 12/23/2013.
 //  Copyright (c) 2013 Sabrina Ren. All rights reserved.
 //
 
-#import "SettingsViewController.h"
-#import "KeyConstants.h"
-#import "FindFriendsViewController.h"
-#import "PlaceIconViewController.h"
-#import "Geofence.h"
-#import "Place.h"
-#import "UIColor+customColours.h"
+#import "CKSettingsViewController.h"
+#import "CKAppConstants.h"
+#import "CKFindFriendsViewController.h"
+#import "CKPlaceIconViewController.h"
+#import "CKGeofence.h"
+#import "CKPlace.h"
+#import "UIColor+CKColours.h"
 
-@interface SettingsViewController ()
-@property (nonatomic) GeofenceViewController *geofenceController;
+@interface CKSettingsViewController ()
+@property (nonatomic) CKGeofenceViewController *geofenceController;
 @property (nonatomic) NSArray *settingsNames;
 @property (nonatomic) NSArray *settingsControllers;
 @property (nonatomic) NSIndexPath *selectedIndex;
 @end
 
-@implementation SettingsViewController
+@implementation CKSettingsViewController
 @synthesize clockPlaces, geofences;
 @synthesize geofenceController, settingsNames, settingsControllers, selectedIndex;
 
@@ -46,10 +46,10 @@
     self.clearsSelectionOnViewWillAppear = YES;
     settingsNames = @[@"Friends", @"Clock Face", @"Log Out"];
 
-    FindFriendsViewController *findFriendsController = [self.storyboard instantiateViewControllerWithIdentifier:@"FindFriendsViewController"];
+    CKFindFriendsViewController *findFriendsController = [self.storyboard instantiateViewControllerWithIdentifier:@"FindFriendsViewController"];
     findFriendsController.friendIds = self.friendIds;
     
-    PlaceIconViewController *clockFaceController = [self.storyboard instantiateViewControllerWithIdentifier:@"PlaceIconViewController"];
+    CKPlaceIconViewController *clockFaceController = [self.storyboard instantiateViewControllerWithIdentifier:@"PlaceIconViewController"];
     clockFaceController.clockPlaces = clockPlaces;
     clockFaceController.isIconView = NO;
     clockFaceController.delegate = self;
@@ -169,7 +169,7 @@
 
 #pragma mark - MyPlaceViewController protocol
 
-- (void)geofenceViewController:(GeofenceViewController *)controller didUpdateGeofence:(Geofence *)geofence isNew:(BOOL)isNew {
+- (void)geofenceViewController:(CKGeofenceViewController *)controller didUpdateGeofence:(CKGeofence *)geofence isNew:(BOOL)isNew {
     if (isNew){
         [geofences addObject:geofence];
         [self.delegate didUpdateGeofence:geofence changeType:newPlace];
@@ -184,7 +184,7 @@
         NSArray *indexPaths = [NSArray arrayWithObject:selectedIndex];
         [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationLeft];
     }
-    for (Geofence *place in geofences) {
+    for (CKGeofence *place in geofences) {
         NSLog(@"Geofences %@", place.fenceName);
     }
     
@@ -196,7 +196,7 @@
     [self.delegate didChangeClockFace];
 }
 
-- (void)placeIconController:(PlaceIconViewController *)controller didChangeIconIndex:(NSInteger)index {
+- (void)placeIconController:(CKPlaceIconViewController *)controller didChangeIconIndex:(NSInteger)index {
     // For use with geofence view controller
 }
 

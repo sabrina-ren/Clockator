@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Sabrina Ren. All rights reserved.
 //
 
-#import "LoginViewController.h"
+#import "CKLoginViewController.h"
 #import <UIKit/UIKit.h>
 #import <sqlite3.h>
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate, NSURLConnectionDelegate, LoginControllerDelegate>
+@interface CKAppDelegate : UIResponder <UIApplicationDelegate, NSURLConnectionDelegate, CKLoginControllerDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 

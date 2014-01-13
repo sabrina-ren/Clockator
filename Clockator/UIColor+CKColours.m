@@ -1,14 +1,14 @@
 //
-//  UIColor+customColours.m
+//  UIColor+CKColours.m
 //  Clockator
 //
 //  Created by Sabrina Ren on 12/24/2013.
 //  Copyright (c) 2013 Sabrina Ren. All rights reserved.
 //
 
-#import "UIColor+customColours.h"
+#import "UIColor+CKColours.h"
 
-@implementation UIColor (customColours)
+@implementation UIColor (CKColours)
 
 + (UIColor *)customSalmon {
     return [UIColor colorWithHue:0.0/360.0 saturation:0.7 brightness:0.85 alpha:1];

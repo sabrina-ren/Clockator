@@ -1,19 +1,20 @@
 //
-//  KeyConstants.m
+//  CKAppConstants.m
 //  Clockator
 //
 //  Created by Sabrina Ren on 1/2/2014.
 //  Copyright (c) 2014 Sabrina Ren. All rights reserved.
 //
 
-#import "KeyConstants.h"
+#import "CKAppConstants.h"
 
 #pragma mark - PFUser
-NSString *const CKUserObjectId = @"objectId";
 NSString *const CKUserDisplayNameKey = @"displayName";
+NSString *const CKUserFacebookKey = @"fbID";
 NSString *const CKUserFriendsKey = @"friends";
-NSString *const CKUserLocationKey = @"location";
 NSString *const CKUserIconKey = @"iconIndex";
+NSString *const CKUserLocationKey = @"location";
+NSString *const CKUserObjectId = @"objectId";
 NSString *const CKUserProfileKey = @"profilePicture";
 NSString *const CKUserUpdateDateKey = @"updateDate";
 
@@ -28,3 +29,4 @@ NSString *const CKNotificationShouldLogOut = @"logOutNotification"; // Observers
 
 #pragma mark - NSUserDefaults
 NSString *const CKUserPreferencesClockFace = @"clockFacePreferences";
+NSString *const CKUserPreferencesFriendsIds = @"friendIds";

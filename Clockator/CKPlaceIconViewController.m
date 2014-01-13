@@ -6,12 +6,12 @@
 //  Copyright (c) 2013 Sabrina Ren. All rights reserved.
 //
 
-#import "PlaceIconViewController.h"
-#import "KeyConstants.h"
-#import "Place.h"
-#import "UIColor+customColours.h"
+#import "CKPlaceIconViewController.h"
+#import "CKAppConstants.h"
+#import "CKPlace.h"
+#import "UIColor+CKColours.h"
 
-@implementation PlaceIconViewController
+@implementation CKPlaceIconViewController
 @synthesize clockPlaces, isIconView, currentIconIndex;
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -50,7 +50,7 @@
 
 - (IBAction)switchChanged:(id)sender {
     UISwitch *cellSwitch = sender;
-    Place *thisPlace = clockPlaces[cellSwitch.tag];
+    CKPlace *thisPlace = clockPlaces[cellSwitch.tag];
     thisPlace.isShown = cellSwitch.on;
     
     [self.delegate didChangeClockFace];

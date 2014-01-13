@@ -1,5 +1,5 @@
 //
-//  LoginViewController.h
+//  CKLoginViewController.h
 //  Clockator
 //
 //  Created by Sabrina Ren on 11/25/2013.
@@ -10,15 +10,15 @@
 
 @class Reachability;
 
-@protocol LoginControllerDelegate <NSObject>
+@protocol CKLoginControllerDelegate <NSObject>
 - (void)didLoginUserIsNew:(BOOL)isNew;
 - (void)shouldDismissLoginController;
 @end
 
-@interface LoginViewController : UIViewController
+@interface CKLoginViewController : UIViewController
 
 @property BOOL isReachable;
-@property (nonatomic, weak) id <LoginControllerDelegate> delegate;
+@property (nonatomic, weak) id <CKLoginControllerDelegate> delegate;
 
 - (void)displayUserInfo:(NSData *)imageData forUser:(NSString *)name;
 

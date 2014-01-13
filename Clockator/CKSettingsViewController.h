@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Sabrina Ren. All rights reserved.
 //
 
-#import "GeofenceViewController.h"
+#import "CKGeofenceViewController.h"
 #import <UIKit/UIKit.h>
 
-@class SettingsViewController;
-@class Geofence;
+@class CKSettingsViewController;
+@class CKGeofence;
 
 typedef enum {
     newPlace,
@@ -18,12 +18,12 @@ typedef enum {
     changedPlace
 } ChangeType;
 
-@protocol SettingsControllerDelegate <NSObject>
-- (void)didUpdateGeofence:(Geofence *)geofence changeType:(ChangeType)type;
+@protocol CKSettingsControllerDelegate <NSObject>
+- (void)didUpdateGeofence:(CKGeofence *)geofence changeType:(ChangeType)type;
 - (void)didChangeClockFace;
 @end
 
-@interface SettingsViewController : UITableViewController <GeofenceControllerDelegate, PlaceIconControllerDelegate>
+@interface CKSettingsViewController : UITableViewController <CKGeofenceControllerDelegate, CKPlaceIconControllerDelegate>
 
 @property (nonatomic) NSArray *friendIds;
 @property (nonatomic) CLLocation *currentLocation;
@@ -31,7 +31,7 @@ typedef enum {
 @property (nonatomic) NSMutableArray *geofences;
 @property BOOL isReachable;
 
-@property (nonatomic, weak) id <SettingsControllerDelegate> delegate;
+@property (nonatomic, weak) id <CKSettingsControllerDelegate> delegate;
 
 - (void)didUpdateCurrentLocation:(CLLocation *)newLocation;
 

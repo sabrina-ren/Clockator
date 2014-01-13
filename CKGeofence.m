@@ -1,16 +1,16 @@
 //
-//  Geofence.m
+//  CKGeofence.m
 //  Clockator
 //
 //  Created by Sabrina Ren on 1/3/2014.
 //  Copyright (c) 2014 Sabrina Ren. All rights reserved.
 //
 
-#import "Geofence.h"
+#import "CKGeofence.h"
 #import <AddressBookUI/AddressBookUI.h>
 
 
-@implementation Geofence
+@implementation CKGeofence
 
 @dynamic fenceRegion;
 @dynamic fencePlacemark;

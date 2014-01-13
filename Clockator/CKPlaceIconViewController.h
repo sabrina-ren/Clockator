@@ -8,19 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
-@class PlaceIconViewController;
+@class CKPlaceIconViewController;
 
-@protocol PlaceIconControllerDelegate <NSObject>
+@protocol CKPlaceIconControllerDelegate <NSObject>
 - (void)didChangeClockFace;
-- (void)placeIconController:(PlaceIconViewController *)controller didChangeIconIndex:(NSInteger)index;
+- (void)placeIconController:(CKPlaceIconViewController *)controller didChangeIconIndex:(NSInteger)index;
 @end
 
-@interface PlaceIconViewController : UITableViewController
+@interface CKPlaceIconViewController : UITableViewController
 
 @property (nonatomic) NSMutableArray *clockPlaces;
 
 @property BOOL isIconView;
 @property NSInteger currentIconIndex;
-@property (nonatomic, weak) id <PlaceIconControllerDelegate> delegate;
+@property (nonatomic, weak) id <CKPlaceIconControllerDelegate> delegate;
 
 @end
