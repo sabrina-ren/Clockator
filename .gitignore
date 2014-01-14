@@ -21,4 +21,8 @@ DerivedData
 Pods
 
 #Private data
+<<<<<<< HEAD
 AppKeys.m
+=======
+AppKeys.m
+>>>>>>> develop
