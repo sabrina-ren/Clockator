@@ -23,7 +23,6 @@
     }
     
     NSArray *names = @[@"Bar", @"Cafe", @"Home", @"School", @"Work", @"Other"];
-    
     NSMutableArray *defaultPlaces = [[NSMutableArray alloc] init];
 
     for (int i=0; i<names.count; i++) {
