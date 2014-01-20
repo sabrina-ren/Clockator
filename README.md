@@ -8,6 +8,8 @@ A handy, social clock that shares your location (and as expected, the time).
 
 *Status: Waiting for App Store approval!*
 
+<a href = "https://www.behance.net/gallery/Clockator/13858317">Loading animation on Behance</a>
+
 ![alt text](http://imgur.com/PfQwX16.png "Welcome screen") &nbsp;&nbsp;&nbsp; ![alt text](http://imgur.com/OYTVdMq.png "Home screen") 
 
 ![alt text](http://imgur.com/ob22ku9.png "Settings") &nbsp;&nbsp;&nbsp; ![alt text](http://imgur.com/UQXxtHA.png "Map screen")
