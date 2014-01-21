@@ -10,8 +10,8 @@ A handy, social clock that shares your location (and as expected, the time).
 
 =========
 View animations on Behance:
-- <a href = "https://www.behance.net/gallery/Clockator/13858317"> Loading animation</a> <br/>
-- <a href = "http://bit.ly/1hc0fPG"> Login Screen</a>
+- <a href = "https://www.behance.net/gallery/Clockator/13858317">Loading animation</a> <br/>
+- <a href = "http://bit.ly/1hc0fPG">Login screen</a>
 
 
 ![alt text](http://imgur.com/PfQwX16.png "Welcome screen") &nbsp;&nbsp;&nbsp; ![alt text](http://imgur.com/OYTVdMq.png "Home screen") 
