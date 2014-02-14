@@ -6,7 +6,7 @@ A handy, social clock that shares your location (and as expected, the time).
 - When you’re at a saved place, your location status is updated to the place name
 - See if your roommates are home or if your friend can pick up a coffee for you, and abolish those daily where-are-you   texts
 
-*Status: Waiting for App Store approval! Currently dealing with a new <a href = "http://techcrunch.com/2014/02/03/apples-latest-crackdown-apps-pulling-the-advertising-identifier-but-not-showing-ads-are-being-rejected-from-app-store/">ad policy</a>.*
+Now available on the <a href = "https://itunes.apple.com/us/app/clockator-location-sharing/id796718934?ls=1&mt=8">App Store</a>!
 
 =========
 View animations on Behance:
