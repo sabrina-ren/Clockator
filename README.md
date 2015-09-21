@@ -1,5 +1,6 @@
 Clockator    <img src = http://imgur.com/cBynclA.png>
 =========
+The <a href = "http://harrypotter.wikia.com/wiki/Weasley_Clock">Weasley clock</a> but IRL.
 A handy, social clock that shares your location (and as expected, the time). 
 - Relevant, noninvasive information is shared, while your geographical location is kept private
 - Add and name places you want to share, such as home or a cafe
